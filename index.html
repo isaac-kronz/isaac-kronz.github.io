@@ -1,7 +1,2804 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Isaac Kronz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Almendra:wght@400;700&family=Montserrat:wght@400;700&family=Playfair+Display:wght@400;700&family=Suez+One&family=Kanit:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='10' fill='%231a237e'/><rect x='30' y='20' width='40' height='10' fill='white'/><rect x='45' y='20' width='10' height='60' fill='white'/><rect x='30' y='70' width='40' height='10' fill='white'/></svg>">
+    <style>
+        .title {
+            font-family: 'Almendra', serif;
+            font-weight: 700;
+            color: #000000;
+            font-size: 6rem;
+            text-align: center;
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+            letter-spacing: 15px;
+            margin: 0;
+        }
+
+        /* Add styles for the flashing subtext */
+        .subtitle {
+            font-family: 'Almendra', serif;
+            color: #000000;
+            font-size: 1.5rem;
+            text-align: center;
+            position: absolute;
+            top: 130px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        /* Animation for the subtitle */
+        @keyframes fadeInOut {
+            0% { opacity: 0; }
+            15% { opacity: 1; }
+            85% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        .subtitle.visible {
+            animation: fadeInOut 3s ease-in-out;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: white;
+            overflow-x: hidden;
+            overflow-y: scroll;
+            width: 100%;
+        }
+
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        .section {
+            min-height: 100vh;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        .home-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            position: relative;
+        }
+
+        .about-section {
+            background: #1a237e;  /* Royal blue */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 60px;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .education-section {
+            background: #c62828;  /* Deep red */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 60px;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .education-section .section-title {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .projects-section {
+            background: #D2B48C;  /* Tan */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 30px;
+            font-family: 'Suez One', serif;
+        }
+
+        .projects-section .section-title {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            cursor: pointer;
+            font-family: 'Suez One', serif;
+            margin-bottom: 60px;
+        }
+
+        .projects-section .title-part {
+            opacity: 0.7;
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+            padding-bottom: 5px;
+            position: relative;
+        }
+
+        .projects-section .title-part:hover {
+            opacity: 1;
+        }
+
+        .projects-section .title-part.active {
+            opacity: 1;
+            border-bottom: 2px solid white;
+        }
+
+        .projects-section .title-part.active::after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.8);
+            bottom: -82px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .media-section {
+            background: #000000;  /* Black */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px;
+            font-family: 'Kanit', sans-serif;
+        }
+
+        .media-section .section-title {
+            font-family: 'Kanit', sans-serif;
+        }
+
+        /* Remove all media-specific styles */
+        .media-grid,
+        .media-row,
+        .media-row-title,
+        .app-grid,
+        .app-placeholder {
+            display: none;
+        }
+
+        .section-title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            color: white;
+            font-size: 4rem;
+            text-align: center;
+            margin: 0 0 10px 0;
+        }
+
+        .window-frame {
+            width: 800px;
+            height: 500px;
+            background: #000000;
+            border-radius: 5px;
+            padding: 20px;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            transform-style: preserve-3d;
+            transition: transform 0.1s linear;
+            margin: 0 auto;
+        }
+
+        .window-panes {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 0;
+            height: 100%;
+        }
+
+        .pane {
+            background: rgba(50, 50, 50, 0.9);
+            border: 10px solid #000000;
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+        }
+
+        /* New frost effect */
+        .scene::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            box-shadow: 
+                inset 0 0 30px 10px rgba(255, 255, 255, 0.4);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .scene {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            transform: translateZ(-10px);
+            overflow: hidden;
+            transition: transform 0.1s linear;
+        }
+
+        .scene video {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            object-fit: cover;
+            pointer-events: none;
+        }
+
+        /* Position the video for each pane */
+        .window-panes .pane:nth-child(1) video {
+            top: 0;
+            left: 0;
+        }
+
+        .window-panes .pane:nth-child(2) video {
+            top: 0;
+            left: -100%;
+        }
+
+        .window-panes .pane:nth-child(3) video {
+            top: -100%;
+            left: 0;
+        }
+
+        .window-panes .pane:nth-child(4) video {
+            top: -100%;
+            left: -100%;
+        }
+
+        .trees {
+            display: none;
+        }
+
+        /* Remove the snow styles */
+        .snow {
+            display: none;
+        }
+
+        /* Remove snow keyframes since they're no longer needed */
+        @keyframes snow {
+            0% {
+                transform: translateY(-100px);
+            }
+            100% {
+                transform: translateY(100px);
+            }
+        }
+
+        /* Remove mute button styles */
+        .mute-button {
+            display: none;
+        }
+
+        /* Update audio controls styles */
+        .audio-controls {
+            position: fixed;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #000000;
+            padding: 10px 5px;
+            border-radius: 5px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            z-index: 10;
+            width: 20px;
+            height: 140px;
+            padding-top: 15px;
+            padding-bottom: 15px;
+        }
+
+        .audio-controls button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            transition: opacity 0.2s;
+            width: 20px;
+            height: 20px;
+        }
+
+        .audio-controls button svg {
+            fill: white;
+            width: 100%;
+            height: 100%;
+        }
+
+        .audio-controls button:hover {
+            opacity: 0.8;
+        }
+
+        .volume-control {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 60px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.2);
+            outline: none;
+            position: absolute;
+            left: -17px;
+            bottom: 35px;
+            transform: rotate(270deg);
+        }
+
+        .volume-control::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+        }
+
+        .volume-control::-moz-range-thumb {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            border: none;
+        }
+
+        /* Remove scroll prompt styles */
+        .scroll-prompt {
+            display: none;
+        }
+
+        /* Add corner frost effects */
+        .scene::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: 3;
+            pointer-events: none;
+            background: 
+                radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.7) 0%, transparent 40%),
+                radial-gradient(circle at 100% 0, rgba(255, 255, 255, 0.7) 0%, transparent 40%),
+                radial-gradient(circle at 0 100%, rgba(255, 255, 255, 0.7) 0%, transparent 40%),
+                radial-gradient(circle at 100% 100%, rgba(255, 255, 255, 0.7) 0%, transparent 40%);
+            filter: blur(5px);
+        }
+
+        /* Remove the outer frame effect */
+        .window-frame::before {
+            display: none;
+        }
+
+        /* Add dark mode button styles */
+        .theme-button {
+            margin-top: 2px !important;
+            margin-bottom: 0 !important;
+        }
+
+        /* Add dark mode styles */
+        body.dark-mode {
+            background: black;
+        }
+
+        body.dark-mode .title {
+            color: white;
+        }
+
+        body.dark-mode .subtitle {
+            color: white;
+        }
+
+        body.dark-mode .window-frame {
+            background: white;
+        }
+
+        body.dark-mode .pane {
+            background: rgba(205, 205, 205, 0.9);
+            border-color: white;
+        }
+
+        body.dark-mode .audio-controls {
+            background: white;
+        }
+
+        body.dark-mode .audio-controls button svg {
+            fill: black;
+        }
+
+        body.dark-mode .volume-control {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        body.dark-mode .volume-control::-webkit-slider-thumb {
+            background: black;
+        }
+
+        body.dark-mode .volume-control::-moz-range-thumb {
+            background: black;
+        }
+
+        /* Add styles for the expanded state and overlay */
+        .blur-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(8px);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .window-frame {
+            transition: transform 0.1s linear;
+            transform-style: preserve-3d;
+        }
+
+        .window-frame.expanded {
+            transform: scale(1.2);
+            z-index: 10;
+            transition: transform 0.3s ease;
+        }
+
+        .description {
+            position: fixed;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 50px;
+            color: black;
+            font-family: 'Almendra', serif;
+            font-size: 1.2rem;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 10;
+            width: 90%;
+            max-width: 900px;
+            text-shadow: 0 0 10px rgba(255,255,255,0.8);
+        }
+
+        .description.visible {
+            opacity: 1;
+        }
+
+        body.dark-mode .description {
+            color: white;
+            text-shadow: 0 0 10px rgba(0,0,0,0.8);
+        }
+
+        .blur-overlay.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Dropdown styles */
+        .dropdown {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            transition: font-family 0.3s ease;
+        }
+
+        .dropdown-button {
+            background: #000000;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-family: inherit;
+            font-size: 1.5rem;
+            cursor: pointer;
+            border-radius: 5px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+
+        .dropdown-button:hover {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0% { 
+                opacity: 1;
+                text-shadow: 0 0 5px rgba(255,255,255,0.5);
+            }
+            50% { 
+                opacity: 0.7;
+                text-shadow: 0 0 15px rgba(255,255,255,0.8);
+            }
+            100% { 
+                opacity: 1;
+                text-shadow: 0 0 5px rgba(255,255,255,0.5);
+            }
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background: #000000;
+            min-width: 200px;
+            border-radius: 5px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            margin-top: 5px;
+        }
+
+        .dropdown-content.show {
+            display: block;
+        }
+
+        .dropdown-content a {
+            color: white;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            font-family: inherit;
+            transition: background 0.2s;
+        }
+
+        .dropdown-content a:hover {
+            animation: menuPulse 1.5s ease-in-out infinite;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        @keyframes menuPulse {
+            0% { 
+                color: white;
+                text-shadow: 0 0 5px rgba(255,255,255,0.5);
+            }
+            50% { 
+                color: rgba(255,255,255,0.8);
+                text-shadow: 0 0 15px rgba(255,255,255,0.8);
+            }
+            100% { 
+                color: white;
+                text-shadow: 0 0 5px rgba(255,255,255,0.5);
+            }
+        }
+
+        /* Dark mode menu pulse */
+        body.dark-mode .dropdown-content a:hover {
+            animation: darkMenuPulse 1.5s ease-in-out infinite;
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes darkMenuPulse {
+            0% { 
+                color: black;
+                text-shadow: 0 0 5px rgba(0,0,0,0.5);
+            }
+            50% { 
+                color: rgba(0,0,0,0.8);
+                text-shadow: 0 0 15px rgba(0,0,0,0.8);
+            }
+            100% { 
+                color: black;
+                text-shadow: 0 0 5px rgba(0,0,0,0.5);
+            }
+        }
+
+        /* Dark mode support */
+        body.dark-mode .dropdown-button {
+            background: white;
+            color: black;
+        }
+
+        body.dark-mode .dropdown-content {
+            background: white;
+        }
+
+        body.dark-mode .dropdown-content a {
+            color: black;
+        }
+
+        body.dark-mode .dropdown-content a:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark-mode .dropdown-button:hover {
+            animation: darkPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes darkPulse {
+            0% { 
+                opacity: 1;
+                text-shadow: 0 0 5px rgba(0,0,0,0.5);
+            }
+            50% { 
+                opacity: 0.7;
+                text-shadow: 0 0 15px rgba(0,0,0,0.8);
+            }
+            100% { 
+                opacity: 1;
+                text-shadow: 0 0 5px rgba(0,0,0,0.5);
+            }
+        }
+
+        .about-section .section-title {
+            font-family: 'Montserrat', sans-serif;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0;
+        }
+
+        .changing-word {
+            position: relative;
+            width: 120px;
+            text-align: right;
+            display: inline-block;
+        }
+
+        .changing-word span {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            white-space: nowrap;
+        }
+
+        .changing-word span.visible {
+            opacity: 1;
+            transform: translateY(-50%);
+        }
+
+        .fixed-word {
+            display: inline-block;
+            margin-left: 15px;
+        }
+
+        .about-text {
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.2rem;
+            line-height: 1.8;
+            max-width: 800px;
+            margin: 40px auto 100px auto;
+            text-align: left;
+            padding: 0 20px;
+        }
+
+        .about-text em {
+            text-decoration: underline;
+            font-style: normal;
+        }
+
+        .about-text strong {
+            font-weight: 700;
+        }
+
+        .about-text p {
+            margin-bottom: 1.5em;
+        }
+
+        .about-text a {
+            color: white;
+            text-decoration: none;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 6px;
+            border-radius: 3px;
+            transition: background 0.3s ease;
+        }
+
+        .about-text a:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .reach-out {
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin: 0;
+            position: absolute;
+            top: 70%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 0;
+            position: absolute;
+            top: 80%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .social-icon {
+            width: 75px;
+            height: 75px;
+            cursor: pointer;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            opacity: 0.9;
+        }
+
+        .social-icon svg {
+            width: 100%;
+            height: 100%;
+            fill: white;
+        }
+
+        .social-icon:hover {
+            transform: scale(1.1);
+            opacity: 1;
+        }
+
+        .carousel-container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 20px auto;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            padding: 40px;
+        }
+
+        .carousel-content {
+            width: 100%;
+            position: relative;
+        }
+
+        .carousel-slide {
+            display: none;
+            text-align: center;
+        }
+
+        .carousel-slide.active {
+            display: block;
+        }
+
+        .carousel-title {
+            color: white;
+            font-family: 'Suez One', serif;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .carousel-subtitle {
+            color: white;
+            font-family: 'Suez One', serif;
+            font-size: 1.5rem;
+            margin: 0 0 20px 0;
+            opacity: 0.9;
+        }
+
+        .carousel-nav {
+            position: absolute;
+            top: 300px;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 15px;
+            cursor: pointer;
+            font-size: 24px;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s ease;
+            z-index: 10;
+        }
+
+        .carousel-nav:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .prev {
+            left: 20px;
+        }
+
+        .next {
+            right: 20px;
+        }
+
+        .video-container {
+            position: relative;
+            width: 70%;
+            padding-bottom: 39.375%;
+            height: 0;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            margin: 0 auto;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 10px;
+        }
+
+        .emoji-container {
+            font-size: 250px;
+            margin: 40px auto;
+            opacity: 0.8;
+            transition: transform 0.3s ease;
+            cursor: default;
+            height: 39.375vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .emoji-container:hover {
+            transform: scale(1.05);
+        }
+
+        .carousel-tabs {
+            display: none;
+        }
+
+        .carousel-tab {
+            color: white;
+            font-family: 'Suez One', serif;
+            font-size: 2rem;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            padding-bottom: 5px;
+            border-bottom: 2px solid transparent;
+        }
+
+        .carousel-tab:hover {
+            opacity: 1;
+        }
+
+        .carousel-tab.active {
+            opacity: 1;
+            border-bottom: 2px solid white;
+        }
+
+        .carousel-container {
+            display: none;
+        }
+
+        .carousel-container.active {
+            display: block;
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            width: 70%;
+            margin: 0 auto;
+        }
+
+        .video-grid-item {
+            width: 100%;
+        }
+
+        .video-grid-title {
+            color: white;
+            font-family: 'Suez One', serif;
+            font-size: 1rem;
+            margin-bottom: 10px;
+            opacity: 0.9;
+            text-align: center;
+        }
+
+        .video-grid-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        .video-grid-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 10px;
+        }
+
+        .stats-container {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+            align-items: center;
+            justify-content: center;
+            height: 39.375vh;
+        }
+
+        .stat-row {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-row:hover {
+            transform: scale(1.05);
+        }
+
+        .stat-row:hover .platform-logo {
+            opacity: 1;
+        }
+
+        .stat-row a {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            text-decoration: none;
+        }
+
+        .platform-logo {
+            width: 100px;
+            height: 100px;
+            fill: white;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .stat-text {
+            color: white;
+            font-family: 'Suez One', serif;
+            font-size: 2.5rem;
+            opacity: 0.9;
+        }
+
+        .sports-list {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            font-family: 'Suez One', serif;
+            color: white;
+            font-size: 2rem;
+            opacity: 0.9;
+            height: 39.375vh;
+            justify-content: center;
+        }
+
+        .sports-list div {
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            cursor: default;
+        }
+
+        .sports-list div:hover {
+            transform: scale(1.1);
+            opacity: 1;
+        }
+
+        .music-list {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            font-family: 'Suez One', serif;
+            color: white;
+            font-size: 1.8rem;
+            opacity: 0.9;
+            height: 39.375vh;
+            justify-content: center;
+            line-height: 1.4;
+        }
+
+        .music-list div {
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            cursor: default;
+            text-align: center;
+        }
+
+        .music-list div:hover {
+            transform: scale(1.05);
+            opacity: 1;
+        }
+
+        .music-list div:last-child {
+            font-style: italic;
+            font-size: 1.6rem;
+            opacity: 0.8;
+        }
+
+        /* Timeline styles */
+        .timeline-container {
+            position: relative;
+            width: 90%;
+            max-width: 1200px;
+            height: 600px;
+            margin: 40px auto;
+            overflow: hidden;
+        }
+
+        .timeline-scroll-area {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            cursor: grab;
+        }
+
+        .timeline-scroll-area:active {
+            cursor: grabbing;
+        }
+
+        .timeline-line {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 50%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-50%);
+        }
+
+        .timeline-events {
+            position: absolute;
+            left: 0;
+            right: 0;
+            display: flex;
+            gap: 200px;
+            padding: 0 600px;
+            transition: transform 0.5s ease;
+        }
+
+        .education-events {
+            top: 50px;
+            margin-bottom: 50px;
+        }
+
+        .work-events {
+            bottom: 50px;
+            margin-top: 50px;
+        }
+
+        .timeline-event {
+            position: relative;
+            width: 200px;
+            flex-shrink: 0;
+        }
+
+        .timeline-event::after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            background: rgba(255, 255, 255, 0.3);
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .education-events .timeline-event::after {
+            top: calc(100% + 10px);
+            height: 140px;
+        }
+
+        .work-events .timeline-event::after {
+            bottom: calc(100% + 10px);
+            height: 140px;
+        }
+
+        .event-content {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .event-content:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .event-content img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .event-hover {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .event-content:hover .event-hover {
+            opacity: 1;
+        }
+
+        .event-tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Playfair Display', serif;
+            font-size: 1rem;
+            width: max-content;
+            max-width: 300px;
+            text-align: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .event-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 8px solid transparent;
+            border-top-color: rgba(0, 0, 0, 0.9);
+        }
+
+        .timeline-event.active .event-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(-10px);
+        }
+
+        .timeline-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .timeline-nav:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .timeline-nav.prev {
+            left: 20px;
+        }
+
+        .timeline-nav.next {
+            right: 20px;
+        }
+
+        .timeline-event::before {
+            content: attr(data-date);
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            white-space: nowrap;
+        }
+
+        .education-events .timeline-event::before {
+            bottom: 270px;
+        }
+
+        .work-events .timeline-event::before {
+            top: 270px;
+        }
+
+        /* Media section styles */
+        .media-categories {
+            width: 90%;
+            max-width: 1200px;
+            margin: 20px auto;
+        }
+
+        .category-row {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+        }
+
+        .category {
+            color: white;
+            font-family: 'Kanit', sans-serif;
+            font-size: 2.5rem;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+            padding-bottom: 10px;
+            border-bottom: 2px solid transparent;
+        }
+
+        .category:hover {
+            opacity: 1;
+        }
+
+        .category.active {
+            opacity: 1;
+            border-bottom: 2px solid white;
+        }
+
+        .subcategory-container {
+            display: none;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .subcategory-container.active {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .subcategory {
+            color: white;
+            font-family: 'Kanit', sans-serif;
+            font-size: 1.35rem;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: all 0.3s ease;
+            padding: 12px 22px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            min-width: 150px;
+        }
+
+        .subcategory:hover {
+            opacity: 1;
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .subcategory.active {
+            opacity: 1;
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .podium-container {
+            display: none;
+            width: 100%;
+            height: 400px;
+            margin-top: 50px;
+            position: relative;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .podium-container.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .podium {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            height: 100%;
+            padding: 0 50px;
+        }
+
+        .podium-place {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.3s ease;
+        }
+
+        .podium-place:hover {
+            transform: translateY(-10px);
+        }
+
+        .podium-title {
+            color: white;
+            font-family: 'Kanit', sans-serif;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            text-align: center;
+            opacity: 0.9;
+            width: 180px;
+            word-wrap: break-word;
+        }
+
+        .podium-image {
+            width: 180px;
+            height: 270px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .podium-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .podium-step {
+            width: 200px;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .first-place {
+            order: 2;
+            margin: 0 20px;
+        }
+
+        .first-place .podium-step {
+            height: 120px;
+            background: linear-gradient(45deg, #FFD700, #FDB931);
+        }
+
+        .second-place {
+            order: 1;
+        }
+
+        .second-place .podium-step {
+            height: 90px;
+            background: linear-gradient(45deg, #C0C0C0, #A8A8A8);
+        }
+
+        .third-place {
+            order: 3;
+        }
+
+        .third-place .podium-step {
+            height: 60px;
+            background: linear-gradient(45deg, #CD7F32, #B5632A);
+        }
+
+        .honorary-mentions {
+            color: white;
+            font-family: 'Kanit', sans-serif;
+            font-size: 1.1rem;
+            text-align: center;
+            margin-top: 30px;
+            opacity: 0.8;
+            padding: 0 20px;
+        }
+
+        .honorary-mentions a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .honorary-mentions a:hover {
+            text-decoration: underline;
+        }
+
+        .podium-link {
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .podium-place:hover {
+            transform: translateY(-10px);
+        }
+
+        .podium-link:hover .podium-title {
+            text-decoration: underline;
+        }
+    </style>
+</head>
 <body>
-<h1>Hello World</h1>
-<p>I'm hosted with GitHub Pages - Isaac</p>
+    <div class="section home-section">
+        <div class="dropdown">
+            <button class="dropdown-button">×</button>
+            <div class="dropdown-content">
+                <a href="#home">Home</a>
+                <a href="#about">About | Contact</a>
+                <a href="#education">Education | Career</a>
+                <a href="#projects">Projects | Hobbies</a>
+                <a href="#media">Recommended Media</a>
+            </div>
+        </div>
+        <div class="audio-controls">
+            <button id="themeButton" class="theme-button">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12,18C11.11,18 10.26,17.8 9.5,17.45C11.56,16.5 13,14.42 13,12C13,9.58 11.56,7.5 9.5,6.55C10.26,6.2 11.11,6 12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18M20,8.69V4H15.31L12,0.69L8.69,4H4V8.69L0.69,12L4,15.31V20H8.69L12,23.31L15.31,20H20V15.31L23.31,12L20,8.69Z"/>
+                </svg>
+            </button>
+            <button id="muteButton">
+                <svg viewBox="0 0 24 24" class="mute-icon">
+                    <path d="M3,9H7L12,4V20L7,15H3V9M16.59,12L14,9.41L15.41,8L18,10.59L20.59,8L22,9.41L19.41,12L22,14.59L20.59,16L18,13.41L15.41,16L14,14.59L16.59,12Z"/>
+                </svg>
+            </button>
+            <input type="range" class="volume-control" min="0" max="100" value="50">
+        </div>
+        <h1 class="title">Isaac Kronz</h1>
+        <div class="subtitle"></div>
+        <div class="window-frame">
+            <div class="window-panes">
+                <div class="pane">
+                    <div class="scene">
+                        <video autoplay loop muted playsinline>
+                            <source src="snowfall.webm" type="video/webm">
+                        </video>
+                        <div class="trees"></div>
+                    </div>
+                </div>
+                <div class="pane">
+                    <div class="scene">
+                        <video autoplay loop muted playsinline>
+                            <source src="snowfall.webm" type="video/webm">
+                        </video>
+                        <div class="trees"></div>
+                    </div>
+                </div>
+                <div class="pane">
+                    <div class="scene">
+                        <video autoplay loop muted playsinline>
+                            <source src="snowfall.webm" type="video/webm">
+                        </video>
+                        <div class="trees"></div>
+                    </div>
+                </div>
+                <div class="pane">
+                    <div class="scene">
+                        <video autoplay loop muted playsinline>
+                            <source src="snowfall.webm" type="video/webm">
+                        </video>
+                        <div class="trees"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="about" class="section about-section">
+        <h2 class="section-title">
+            <div class="changing-word">
+                <span class="visible">About</span>
+                <span>Contact</span>
+                <span>Hire</span>
+            </div>
+            <div class="fixed-word">Me</div>
+        </h2>
+        <p class="about-text">
+            I <em>am</em> a Christian, husband (4 months in), software engineer, and creator.<br>
+            I <em>love</em> creativity and competition.<br>
+            I <em>hate</em> laziness, lack of ambition, and dishonesty.<br>
+            I <em>believe</em> <a href="https://reason.com/2020/02/29/specialization-is-for-insects/" target="_blank" rel="noopener noreferrer">generalization > specialization</a> and <a href="https://www.cato.org/commentary/case-libertarian" target="_blank" rel="noopener noreferrer">small gov > big gov</a>.<br>
+            I <em>enjoy</em> anything that captures my imagination.<br>
+            I <em>dislike</em> pointless work meetings, asparagus, and bluegrass.<br><br>
+            I am <em>open</em> to full time and remote roles doing anything in software engineering, from <strong>full stack</strong> to <strong>mobile</strong>, or picking up something new like <strong>AI/ML</strong>, <strong>native PC/Mac</strong>, or <strong>game development.</strong> However, I am <i>most interested</i> in creative work such as <strong>content strategist</strong> or <strong>video editing.</strong>
+        </p>
+        <p class="reach-out">Reach out</p>
+        <div class="social-icons">
+            <a href="https://mail.google.com/mail/u/0/?fs=1&to=isaackronz@gmail.com&su=I+want+to+hire+you&body=500k+per+year+starting,+sound+like+a+deal?%0A%0ASincerely,+[Your+name+here]&tf=cm" class="social-icon" title="isaackronz@gmail.com" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24">
+                    <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                </svg>
+            </a>
+            <a href="https://www.linkedin.com/in/isaackronz/" class="social-icon" title="LinkedIn" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24">
+                    <path d="M19,3A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5A2,2 0 0,1 3,19V5A2,2 0 0,1 5,3H19M18.5,18.5V13.2A3.26,3.26 0 0,0 15.24,9.94C14.39,9.94 13.4,10.46 12.92,11.24V10.13H10.13V18.5H12.92V13.57C12.92,12.8 13.54,12.17 14.31,12.17A1.4,1.4 0 0,1 15.71,13.57V18.5H18.5M6.88,8.56A1.68,1.68 0 0,0 8.56,6.88C8.56,5.95 7.81,5.19 6.88,5.19A1.69,1.69 0 0,0 5.19,6.88C5.19,7.81 5.95,8.56 6.88,8.56M8.27,18.5V10.13H5.5V18.5H8.27Z"/>
+                </svg>
+            </a>
+            <a href="https://x.com/ikronz/" class="social-icon" title="X (Twitter)" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                </svg>
+            </a>
+        </div>
+    </div>
+
+    <div id="education" class="section education-section">
+        <h2 class="section-title">Education & Career</h2>
+        <div class="timeline-container">
+            <div class="timeline-scroll-area">
+                <div class="timeline-line"></div>
+                <div class="timeline-events education-events">
+                    <div class="timeline-event" data-date="1997">
+                        <div class="event-content">
+                            <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23ddd'/><text x='50' y='50' font-size='20' text-anchor='middle' dy='.3em' fill='%23666'>1997</text></svg>" alt="Placeholder">
+                            <div class="event-hover">Click for more</div>
+                            <div class="event-tooltip">Born ready to learn!</div>
+                        </div>
+                    </div>
+                    <div class="timeline-event" data-date="2003">
+                        <div class="event-content">
+                            <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23ddd'/><text x='50' y='50' font-size='20' text-anchor='middle' dy='.3em' fill='%23666'>2003</text></svg>" alt="Placeholder">
+                            <div class="event-hover">Click for more</div>
+                            <div class="event-tooltip">Started elementary school with a passion for learning.</div>
+                        </div>
+                    </div>
+                    <div class="timeline-event" data-date="2009">
+                        <div class="event-content">
+                            <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23ddd'/><text x='50' y='50' font-size='20' text-anchor='middle' dy='.3em' fill='%23666'>2009</text></svg>" alt="Placeholder">
+                            <div class="event-hover">Click for more</div>
+                            <div class="event-tooltip">Middle school: where the real challenges began.</div>
+                        </div>
+                    </div>
+                    <div class="timeline-event" data-date="2012">
+                        <div class="event-content">
+                            <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23ddd'/><text x='50' y='50' font-size='20' text-anchor='middle' dy='.3em' fill='%23666'>2012</text></svg>" alt="Placeholder">
+                            <div class="event-hover">Click for more</div>
+                            <div class="event-tooltip">High school: discovered my love for technology.</div>
+                        </div>
+                    </div>
+                    <div class="timeline-event" data-date="2016">
+                        <div class="event-content">
+                            <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23ddd'/><text x='50' y='50' font-size='20' text-anchor='middle' dy='.3em' fill='%23666'>2016</text></svg>" alt="Placeholder">
+                            <div class="event-hover">Click for more</div>
+                            <div class="event-tooltip">Started university, diving deep into computer science.</div>
+                        </div>
+                    </div>
+                    <div class="timeline-event" data-date="2020">
+                        <div class="event-content">
+                            <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23ddd'/><text x='50' y='50' font-size='20' text-anchor='middle' dy='.3em' fill='%23666'>2020</text></svg>" alt="Placeholder">
+                            <div class="event-hover">Click for more</div>
+                            <div class="event-tooltip">Graduated with honors in Computer Science.</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="timeline-events work-events">
+                    <div class="timeline-event" data-date="2014">
+                        <div class="event-content">
+                            <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23ddd'/><text x='50' y='50' font-size='20' text-anchor='middle' dy='.3em' fill='%23666'>2014</text></svg>" alt="Placeholder">
+                            <div class="event-hover">Click for more</div>
+                            <div class="event-tooltip">First summer internship in web development.</div>
+                        </div>
+                    </div>
+                    <div class="timeline-event" data-date="2017">
+                        <div class="event-content">
+                            <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23ddd'/><text x='50' y='50' font-size='20' text-anchor='middle' dy='.3em' fill='%23666'>2017</text></svg>" alt="Placeholder">
+                            <div class="event-hover">Click for more</div>
+                            <div class="event-tooltip">Part-time software developer while in university.</div>
+                        </div>
+                    </div>
+                    <div class="timeline-event" data-date="2020">
+                        <div class="event-content">
+                            <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23ddd'/><text x='50' y='50' font-size='20' text-anchor='middle' dy='.3em' fill='%23666'>2020</text></svg>" alt="Placeholder">
+                            <div class="event-hover">Click for more</div>
+                            <div class="event-tooltip">First full-time software engineering position.</div>
+                        </div>
+                    </div>
+                    <div class="timeline-event" data-date="2023">
+                        <div class="event-content">
+                            <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23ddd'/><text x='50' y='50' font-size='20' text-anchor='middle' dy='.3em' fill='%23666'>2023</text></svg>" alt="Placeholder">
+                            <div class="event-hover">Click for more</div>
+                            <div class="event-tooltip">Exploring new opportunities in software and content creation.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="timeline-nav prev">←</button>
+            <button class="timeline-nav next">→</button>
+        </div>
+    </div>
+
+    <div id="projects" class="section projects-section">
+        <h2 class="section-title">
+            <span class="title-part active" data-carousel="projects">Projects</span>
+            <span>&</span>
+            <span class="title-part" data-carousel="hobbies">Hobbies</span>
+        </h2>
+        <div class="carousel-tabs">
+            <div class="carousel-tab active" data-carousel="projects">Projects</div>
+            <div class="carousel-tab" data-carousel="hobbies">Hobbies</div>
+        </div>
+        <div class="carousel-container active" id="projects-carousel">
+            <div class="carousel-content">
+                <div class="carousel-slide active">
+                    <div class="carousel-subtitle">Creative - Esports Documentary</div>
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/FQfPU5qA0Ts" title="Esports Documentary" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                </div>
+                <div class="carousel-slide">
+                    <div class="carousel-subtitle">Software - Coming Soon</div>
+                    <div class="emoji-container">🤔</div>
+                </div>
+            </div>
+            <button class="carousel-nav prev">←</button>
+            <button class="carousel-nav next">→</button>
+        </div>
+        <div class="carousel-container" id="hobbies-carousel">
+            <div class="carousel-content">
+                <div class="carousel-slide active">
+                    <div class="carousel-subtitle">Fiirce - Competitive Gaming</div>
+                    <div class="video-grid">
+                        <div class="video-grid-item">
+                            <div class="video-grid-title">Hyperscape - Top 10 Worldwide</div>
+                            <div class="video-grid-container">
+                                <iframe src="https://www.youtube.com/embed/znnEu3oOe2U" title="Hyperscape" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            </div>
+                        </div>
+                        <div class="video-grid-item">
+                            <div class="video-grid-title">Darwin Project - Top 10 Worldwide</div>
+                            <div class="video-grid-container">
+                                <iframe src="https://www.youtube.com/embed/I9Ph6-Fzp0Y?start=359" title="Darwin Project" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            </div>
+                        </div>
+                        <div class="video-grid-item">
+                            <div class="video-grid-title">Krunker - Top 50 Worldwide</div>
+                            <div class="video-grid-container">
+                                <iframe src="https://www.youtube.com/embed/nJaPFDxaXmc" title="Krunker" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            </div>
+                        </div>
+                        <div class="video-grid-item">
+                            <div class="video-grid-title">Apex tourney - 4th Place</div>
+                            <div class="video-grid-container">
+                                <iframe src="https://www.youtube.com/embed/1YnXLFDcvjU" title="Apex Tournament" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-slide">
+                    <div class="carousel-subtitle">Fiirce - Gaming Content</div>
+                    <div class="stats-container">
+                        <div class="stat-row">
+                            <a href="https://www.youtube.com/@fiirce" target="_blank" rel="noopener noreferrer">
+                                <svg class="platform-logo" viewBox="0 0 24 24">
+                                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                                </svg>
+                                <div class="stat-text">~1.8 million views</div>
+                            </a>
+                        </div>
+                        <div class="stat-row">
+                            <a href="https://www.tiktok.com/@fiirce" target="_blank" rel="noopener noreferrer">
+                                <svg class="platform-logo" viewBox="0 0 24 24">
+                                    <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>
+                                </svg>
+                                <div class="stat-text">~17 million views</div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-slide">
+                    <div class="carousel-subtitle">Sports</div>
+                    <div class="sports-list">
+                        <div>Snowboarding</div>
+                        <div>Volleyball</div>
+                        <div>Pickleball</div>
+                        <div>Ping Pong</div>
+                        <div>Golf</div>
+                    </div>
+                </div>
+                <div class="carousel-slide">
+                    <div class="carousel-subtitle">Music</div>
+                    <div class="music-list">
+                        <div>Piano lessons/recitals for 10 years</div>
+                        <div>Guitar for one year</div>
+                        <div>Violin for one year</div>
+                        <div>Music production/composition... hopefully soon</div>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-nav prev">←</button>
+            <button class="carousel-nav next">→</button>
+        </div>
+    </div>
+
+    <div id="media" class="section media-section">
+        <h2 class="section-title">Recommended Media</h2>
+        <div class="media-categories">
+            <div class="category-row">
+                <div class="category" data-category="reading">Reading</div>
+                <div class="category" data-category="listening">Listening</div>
+                <div class="category" data-category="watching">Watching</div>
+                <div class="category" data-category="playing">Playing</div>
+            </div>
+            <div class="subcategory-container" data-parent="reading">
+                <div class="subcategory">Books</div>
+            </div>
+            <div class="subcategory-container" data-parent="listening">
+                <div class="subcategory">Audio Dramas</div>
+                <div class="subcategory">Podcasts</div>
+                <div class="subcategory">Soundtracks</div>
+                <div class="subcategory">Musicians</div>
+                <div class="subcategory">Songs</div>
+            </div>
+            <div class="subcategory-container" data-parent="watching">
+                <div class="subcategory">Movies</div>
+                <div class="subcategory">Shows</div>
+                <div class="subcategory">YouTube Channels</div>
+                <div class="subcategory">YouTube Videos</div>
+            </div>
+            <div class="subcategory-container" data-parent="playing">
+                <div class="subcategory">Board/Card Games</div>
+                <div class="subcategory">Singleplayer/Co-op Video Games</div>
+                <div class="subcategory">Multiplayer/Competitive Video Games</div>
+            </div>
+        </div>
+
+        <!-- Podium containers -->
+        <div class="podium-container" data-category="books">
+            <div class="podium">
+                <div class="podium-place second-place">
+                    <a href="https://www.amazon.com/Unbroken-World-Survival-Resilience-Redemption/dp/0812974492" target="_blank" rel="noopener noreferrer" class="podium-link">
+                        <div class="podium-title">Unbroken</div>
+                        <div class="podium-image">
+                            <img src="unbroken.jpg" alt="Unbroken">
+                        </div>
+                        <div class="podium-step"></div>
+                    </a>
+                </div>
+                <div class="podium-place first-place">
+                    <a href="https://www.biblegateway.com/passage/?search=Genesis%201&version=NRSVUE" target="_blank" rel="noopener noreferrer" class="podium-link">
+                        <div class="podium-title">The Bible</div>
+                        <div class="podium-image">
+                            <img src="bible.jpg" alt="The Bible">
+                        </div>
+                        <div class="podium-step"></div>
+                    </a>
+                </div>
+                <div class="podium-place third-place">
+                    <a href="https://scp-wiki.wikidot.com/antimemetics-division-hub" target="_blank" rel="noopener noreferrer" class="podium-link">
+                        <div class="podium-title">There Is No Antimemetics Division</div>
+                        <div class="podium-image">
+                            <img src="antimemetics.jpg" alt="There Is No Antimemetics Division">
+                        </div>
+                        <div class="podium-step"></div>
+                    </a>
+                </div>
+            </div>
+            <div class="honorary-mentions">
+                Honorary Mentions: The Lords of Easy Money, Anthem, The Hobbit, The Perfect Police State, Starship Troopers
+            </div>
+        </div>
+
+        <!-- Empty podium containers for other categories -->
+        <div class="podium-container" data-category="audiodramas">
+            <div class="podium">
+                <div class="podium-place second-place">
+                    <a href="https://www.amazon.com/Star-Wars-Heir-to-Empire-audiobook/dp/B005LEV2V6" target="_blank" rel="noopener noreferrer" class="podium-link">
+                        <div class="podium-title">The Thrawn Trilogy</div>
+                        <div class="podium-image">
+                            <img src="thrawn.jpg" alt="The Thrawn Trilogy">
+                        </div>
+                        <div class="podium-step"></div>
+                    </a>
+                </div>
+                <div class="podium-place first-place">
+                    <a href="https://store.focusonthefamily.com/radio-theatre-the-chronicles-of-narnia-set-digital/" target="_blank" rel="noopener noreferrer" class="podium-link">
+                        <div class="podium-title">The Chronicles of Narnia</div>
+                        <div class="podium-image">
+                            <img src="narnia.jpg" alt="The Chronicles of Narnia">
+                        </div>
+                        <div class="podium-step"></div>
+                    </a>
+                </div>
+                <div class="podium-place third-place">
+                    <div class="podium-title">Looking for more</div>
+                    <div class="podium-image">
+                        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 48px;">🎧</div>
+                    </div>
+                    <div class="podium-step"></div>
+                </div>
+            </div>
+        </div>
+        <!-- Add similar empty podium containers for other categories -->
+        <div class="podium-container" data-category="podcasts">
+            <div class="podium">
+                <div class="podium-place second-place">
+                    <a href="https://www.youtube.com/watch?v=KlIkkeWmVvA&list=PLxpS2Q_QbR0cPCLxnnP3VnEiKk3tmsQ4f" target="_blank" rel="noopener noreferrer" class="podium-link">
+                        <div class="podium-title">Exandria Unlimited: Calamity</div>
+                        <div class="podium-image">
+                            <img src="exucalamity.webp" alt="Exandria Unlimited: Calamity">
+                        </div>
+                        <div class="podium-step"></div>
+                    </a>
+                </div>
+                <div class="podium-place first-place">
+                    <a href="https://www.youtube.com/@allin" target="_blank" rel="noopener noreferrer" class="podium-link">
+                        <div class="podium-title">The All-In Podcast</div>
+                        <div class="podium-image">
+                            <img src="all-in.jpg" alt="The All-In Podcast">
+                        </div>
+                        <div class="podium-step"></div>
+                    </a>
+                </div>
+                <div class="podium-place third-place">
+                    <a href="https://www.youtube.com/@ShawnRyanShow" target="_blank" rel="noopener noreferrer" class="podium-link">
+                        <div class="podium-title">The Shawn Ryan Show</div>
+                        <div class="podium-image">
+                            <img src="srs.jpg" alt="The Shawn Ryan Show">
+                        </div>
+                        <div class="podium-step"></div>
+                    </a>
+                </div>
+            </div>
+            <div class="honorary-mentions">
+                Honorary Mentions: Hello Internet, Nerd Poker, Joe Rogan
+            </div>
+        </div>
+
+        <!-- Soundtracks podium -->
+        <div class="podium-container" data-category="soundtracks">
+            <div class="podium">
+                <div class="podium-place second-place">
+                    <a href="https://www.youtube.com/watch?v=OvpnMT-iqCM" target="_blank" rel="noopener noreferrer" class="podium-link">
+                        <div class="podium-title">Ori and the Blind Forest</div>
+                        <div class="podium-image">
+                            <img src="ori.jpg" alt="Ori and the Blind Forest">
+                        </div>
+                        <div class="podium-step"></div>
+                    </a>
+                </div>
+                <div class="podium-place first-place">
+                    <a href="https://www.youtube.com/watch?v=mGCnOLGwzg0&list=OLAK5uy_mQpLBz0N6mCebSVw7xfyf_x7UZKoVHm_Q&index=2" target="_blank" rel="noopener noreferrer" class="podium-link">
+                        <div class="podium-title">TRON: Legacy</div>
+                        <div class="podium-image">
+                            <img src="tron.jpg" alt="TRON: Legacy">
+                        </div>
+                        <div class="podium-step"></div>
+                    </a>
+                </div>
+                <div class="podium-place third-place">
+                    <a href="https://www.youtube.com/watch?v=UuPb1J_RCJM&list=PLYXfr3Na3Iuf8Kg__C6Fll5bapkVOXp9b" target="_blank" rel="noopener noreferrer" class="podium-link">
+                        <div class="podium-title">Harry Potter</div>
+                        <div class="podium-image">
+                            <img src="harrypotter.jpg" alt="Harry Potter">
+                        </div>
+                        <div class="podium-step"></div>
+                    </a>
+                </div>
+            </div>
+            <div class="honorary-mentions">
+                Honorary Mentions: The Lord of the Rings, Star Wars, The Social Network
+            </div>
+        </div>
+
+        <!-- Songs podium -->
+        <div class="podium-container" data-category="songs">
+            <div class="podium">
+                <div class="podium-place second-place">
+                    <a href="https://www.youtube.com/watch?v=8nfhHBJQXOY" target="_blank" rel="noopener noreferrer" class="podium-link">
+                        <div class="podium-title">Pompeii MMXXIII</div>
+                        <div class="podium-image">
+                            <img src="pompeii.jpg" alt="Pompeii MMXXIII">
+                        </div>
+                        <div class="podium-step"></div>
+                    </a>
+                </div>
+                <div class="podium-place first-place">
+                    <a href="https://www.youtube.com/watch?v=mqgEYRtWMJU" target="_blank" rel="noopener noreferrer" class="podium-link">
+                        <div class="podium-title">Son of Flynn</div>
+                        <div class="podium-image">
+                            <img src="sonofflynn.jpg" alt="Son of Flynn">
+                        </div>
+                        <div class="podium-step"></div>
+                    </a>
+                </div>
+                <div class="podium-place third-place">
+                    <a href="https://www.youtube.com/watch?v=PuMz4v5PYKc" target="_blank" rel="noopener noreferrer" class="podium-link">
+                        <div class="podium-title">Look at the Sky</div>
+                        <div class="podium-image">
+                            <img src="lookatthesky.jpg" alt="Look at the Sky">
+                        </div>
+                        <div class="podium-step"></div>
+                    </a>
+                </div>
+            </div>
+            <div class="honorary-mentions">
+                Honorary Mentions: Right this Second, The Iron Machine, Chambermaid Swing, Linguistics, Edge of the World
+            </div>
+        </div>
+
+        <!-- Musicians podium -->
+        <div class="podium-container" data-category="musicians">
+            <div class="podium">
+                <div class="podium-place second-place">
+                    <a href="https://www.youtube.com/@CaravanPalace" target="_blank" rel="noopener noreferrer" class="podium-link">
+                        <div class="podium-title">Caravan Palace</div>
+                        <div class="podium-image">
+                            <img src="caravanpalace.jpg" alt="Caravan Palace">
+                        </div>
+                        <div class="podium-step"></div>
+                    </a>
+                </div>
+                <div class="podium-place first-place">
+                    <a href="https://www.youtube.com/@HansZimmer" target="_blank" rel="noopener noreferrer" class="podium-link">
+                        <div class="podium-title">Hans Zimmer</div>
+                        <div class="podium-image">
+                            <img src="hanszimmer.jpg" alt="Hans Zimmer">
+                        </div>
+                        <div class="podium-step"></div>
+                    </a>
+                </div>
+                <div class="podium-place third-place">
+                    <a href="https://www.youtube.com/@deadmau5" target="_blank" rel="noopener noreferrer" class="podium-link">
+                        <div class="podium-title">Deadmau5</div>
+                        <div class="podium-image">
+                            <img src="deadmau5.jpg" alt="Deadmau5">
+                        </div>
+                        <div class="podium-step"></div>
+                    </a>
+                </div>
+            </div>
+            <div class="honorary-mentions">
+                Honorary Mentions: Secession Studios, Overwerk, Le Castle Vania, Apashe, Daft Punk, E-Dubble, Avicii, Rok Nardin
+            </div>
+        </div>
+
+        <!-- Movies podium -->
+        <div class="podium-container" data-category="movies">
+            <div class="podium">
+                <div class="podium-place second-place">
+                    <a href="https://www.imdb.com/title/tt1104001/" target="_blank" rel="noopener noreferrer" class="podium-link">
+                        <div class="podium-title">TRON: Legacy</div>
+                        <div class="podium-image">
+                            <img src="tronmovie.jpg" alt="TRON: Legacy">
+                        </div>
+                        <div class="podium-step"></div>
+                    </a>
+                </div>
+                <div class="podium-place first-place">
+                    <a href="https://www.imdb.com/title/tt0482571/" target="_blank" rel="noopener noreferrer" class="podium-link">
+                        <div class="podium-title">The Prestige</div>
+                        <div class="podium-image">
+                            <img src="prestige.jpg" alt="The Prestige">
+                        </div>
+                        <div class="podium-step"></div>
+                    </a>
+                </div>
+                <div class="podium-place third-place">
+                    <a href="https://www.imdb.com/title/tt0468569/" target="_blank" rel="noopener noreferrer" class="podium-link">
+                        <div class="podium-title">The Dark Knight</div>
+                        <div class="podium-image">
+                            <img src="darkknight.jpg" alt="The Dark Knight">
+                        </div>
+                        <div class="podium-step"></div>
+                    </a>
+                </div>
+            </div>
+            <div class="honorary-mentions">
+                Honorary Mentions: The Princess Bride, Shutter Island, Inception, Dune, Interstellar, The Fellowship of the Ring
+            </div>
+        </div>
+
+        <!-- Shows podium -->
+        <div class="podium-container" data-category="shows">
+            <div class="podium">
+                <div class="podium-place second-place">
+                    <a href="https://www.imdb.com/title/tt0944947/" target="_blank" rel="noopener noreferrer" class="podium-link">
+                        <div class="podium-title">Game of Thrones</div>
+                        <div class="podium-image">
+                            <img src="got.jpg" alt="Game of Thrones">
+                        </div>
+                        <div class="podium-step"></div>
+                    </a>
+                </div>
+                <div class="podium-place first-place">
+                    <a href="https://www.imdb.com/title/tt11126994/" target="_blank" rel="noopener noreferrer" class="podium-link">
+                        <div class="podium-title">Arcane</div>
+                        <div class="podium-image">
+                            <img src="arcane.jpg" alt="Arcane">
+                        </div>
+                        <div class="podium-step"></div>
+                    </a>
+                </div>
+                <div class="podium-place third-place">
+                    <a href="https://www.imdb.com/title/tt1475582/" target="_blank" rel="noopener noreferrer" class="podium-link">
+                        <div class="podium-title">Sherlock</div>
+                        <div class="podium-image">
+                            <img src="sherlock.jpg" alt="Sherlock">
+                        </div>
+                        <div class="podium-step"></div>
+                    </a>
+                </div>
+            </div>
+            <div class="honorary-mentions">
+                Honorary Mentions: Community, Severance, Breaking Bad, The Blacklist, Daredevil
+            </div>
+        </div>
+
+        <!-- YouTube Channels podium -->
+        <div class="podium-container" data-category="youtubechannels">
+            <div class="podium">
+                <div class="podium-place second-place">
+                    <a href="https://www.youtube.com/@FleshSimulator" target="_blank" rel="noopener noreferrer" class="podium-link">
+                        <div class="podium-title">Flesh Simulator</div>
+                        <div class="podium-image">
+                            <img src="flesh.jpg" alt="Flesh Simulator">
+                        </div>
+                        <div class="podium-step"></div>
+                    </a>
+                </div>
+                <div class="podium-place first-place">
+                    <a href="https://www.youtube.com/@casey" target="_blank" rel="noopener noreferrer" class="podium-link">
+                        <div class="podium-title">Casey Neistat</div>
+                        <div class="podium-image">
+                            <img src="casey.jpg" alt="Casey Neistat">
+                        </div>
+                        <div class="podium-step"></div>
+                    </a>
+                </div>
+                <div class="podium-place third-place">
+                    <a href="https://www.youtube.com/@melodysheep" target="_blank" rel="noopener noreferrer" class="podium-link">
+                        <div class="podium-title">Melodysheep</div>
+                        <div class="podium-image">
+                            <img src="melodysheep.jpg" alt="Melodysheep">
+                        </div>
+                        <div class="podium-step"></div>
+                    </a>
+                </div>
+            </div>
+            <div class="honorary-mentions">
+                Honorary Mentions: Veritasium, fern, kold, CGPGrey, Rainbolt, Michael Reeves
+            </div>
+        </div>
+
+        <!-- YouTube Videos podium -->
+        <div class="podium-container" data-category="youtubevideos">
+            <div class="podium">
+                <div class="podium-place second-place">
+                    <a href="https://www.youtube.com/watch?v=pKYeAN-_wFI" target="_blank" rel="noopener noreferrer" class="podium-link">
+                        <div class="podium-title">Whiplash and La La Land</div>
+                        <div class="podium-image">
+                            <img src="whiplash.jpg" alt="Whiplash and La La Land">
+                        </div>
+                        <div class="podium-step"></div>
+                    </a>
+                </div>
+                <div class="podium-place first-place">
+                    <a href="https://www.youtube.com/watch?v=QJbpJQscn9E" target="_blank" rel="noopener noreferrer" class="podium-link">
+                        <div class="podium-title">My Year 2016</div>
+                        <div class="podium-image">
+                            <img src="2016.jpg" alt="My Year 2016">
+                        </div>
+                        <div class="podium-step"></div>
+                    </a>
+                </div>
+                <div class="podium-place third-place">
+                    <a href="https://www.youtube.com/watch?v=2bmsNa9GOR0" target="_blank" rel="noopener noreferrer" class="podium-link">
+                        <div class="podium-title">Sacrifice</div>
+                        <div class="podium-image">
+                            <img src="sacrifice.jpg" alt="Sacrifice">
+                        </div>
+                        <div class="podium-step"></div>
+                    </a>
+                </div>
+            </div>
+            <div class="honorary-mentions">
+                Honorary Mentions: <a href="https://www.youtube.com/watch?v=O7hgjuFfn3A" target="_blank" rel="noopener noreferrer">Astartes</a>, <a href="https://www.youtube.com/watch?v=mDYqT0_9VR4" target="_blank" rel="noopener noreferrer">The Call</a>
+            </div>
+        </div>
+
+        <!-- Board/Card Games podium -->
+        <div class="podium-container" data-category="boardcardgames">
+            <div class="podium">
+                <div class="podium-place second-place">
+                    <a href="https://www.pokerstars.com/" target="_blank" rel="noopener noreferrer" class="podium-link">
+                        <div class="podium-title">Poker</div>
+                        <div class="podium-image">
+                            <img src="poker.jpg" alt="Poker">
+                        </div>
+                        <div class="podium-step"></div>
+                    </a>
+                </div>
+                <div class="podium-place first-place">
+                    <a href="https://dnd.wizards.com/" target="_blank" rel="noopener noreferrer" class="podium-link">
+                        <div class="podium-title">Dungeons and Dragons</div>
+                        <div class="podium-image">
+                            <img src="dnd.png" alt="Dungeons and Dragons">
+                        </div>
+                        <div class="podium-step"></div>
+                    </a>
+                </div>
+                <div class="podium-place third-place">
+                    <a href="https://www.chess.com/" target="_blank" rel="noopener noreferrer" class="podium-link">
+                        <div class="podium-title">Chess</div>
+                        <div class="podium-image">
+                            <img src="chess.jpg" alt="Chess">
+                        </div>
+                        <div class="podium-step"></div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Single-player/Co-op Video Games podium -->
+        <div class="podium-container" data-category="singleplayercoopvideogames">
+            <div class="podium">
+                <div class="podium-place second-place">
+                    <a href="https://www.minecraft.net/" target="_blank" rel="noopener noreferrer" class="podium-link">
+                        <div class="podium-title">Minecraft</div>
+                        <div class="podium-image">
+                            <img src="minecraft.jpg" alt="Minecraft">
+                        </div>
+                        <div class="podium-step"></div>
+                    </a>
+                </div>
+                <div class="podium-place first-place">
+                    <a href="https://www.youtube.com/watch?v=8MQO2STCbbY" target="_blank" rel="noopener noreferrer" class="podium-link">
+                        <div class="podium-title">Super Mario 64</div>
+                        <div class="podium-image">
+                            <img src="mario64.jpg" alt="Super Mario 64">
+                        </div>
+                        <div class="podium-step"></div>
+                    </a>
+                </div>
+                <div class="podium-place third-place">
+                    <a href="https://www.youtube.com/watch?v=WojvlJ_xibE" target="_blank" rel="noopener noreferrer" class="podium-link">
+                        <div class="podium-title">Super Mario Bros 2</div>
+                        <div class="podium-image">
+                            <img src="mario2.png" alt="Super Mario Bros 2">
+                        </div>
+                        <div class="podium-step"></div>
+                    </a>
+                </div>
+            </div>
+            <div class="honorary-mentions">
+                Honorary Mentions: Revenge of the Sith DS, The Legend of Zelda: Breath of the Wild, LEGO Star Wars, Mario Kart DS
+            </div>
+        </div>
+
+        <!-- Multiplayer/Competitive Video Games podium -->
+        <div class="podium-container" data-category="multiplayercompetitivevideogames">
+            <div class="podium">
+                <div class="podium-place second-place">
+                    <a href="https://www.ea.com/games/apex-legends" target="_blank" rel="noopener noreferrer" class="podium-link">
+                        <div class="podium-title">Apex Legends</div>
+                        <div class="podium-image">
+                            <img src="apex.jpg" alt="Apex Legends">
+                        </div>
+                        <div class="podium-step"></div>
+                    </a>
+                </div>
+                <div class="podium-place first-place">
+                    <a href="https://www.counter-strike.net/" target="_blank" rel="noopener noreferrer" class="podium-link">
+                        <div class="podium-title">Counter-Strike</div>
+                        <div class="podium-image">
+                            <img src="cs.jpg" alt="Counter-Strike">
+                        </div>
+                        <div class="podium-step"></div>
+                    </a>
+                </div>
+                <div class="podium-place third-place">
+                    <a href="https://www.leagueoflegends.com/" target="_blank" rel="noopener noreferrer" class="podium-link">
+                        <div class="podium-title">League of Legends</div>
+                        <div class="podium-image">
+                            <img src="lol.webp" alt="League of Legends">
+                        </div>
+                        <div class="podium-step"></div>
+                    </a>
+                </div>
+            </div>
+            <div class="honorary-mentions">
+                Honorary Mentions: Hyper Scape (dead), Deadlock, Rocket League, Darwin Project (dead)
+            </div>
+        </div>
+    </div>
+
+    <audio id="bgMusic" loop>
+        <source src="oneheartsnowfall2.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="blur-overlay"></div>
+    <div class="description">This is my idealized view. I love winter, snowboarding, and just about anything involving deep, fluffy snow.</div>
+
+    <script>
+                // Media category functionality
+                const categories = document.querySelectorAll('.category');
+        const subcategoryContainers = document.querySelectorAll('.subcategory-container');
+        const subcategories = document.querySelectorAll('.subcategory');
+        const podiumContainers = document.querySelectorAll('.podium-container');
+
+        categories.forEach(category => {
+            category.addEventListener('click', () => {
+                // Update active category
+                categories.forEach(c => c.classList.remove('active'));
+                category.classList.add('active');
+
+                // Show corresponding subcategories
+                subcategoryContainers.forEach(container => {
+                    if (container.dataset.parent === category.dataset.category) {
+                        container.classList.add('active');
+                    } else {
+                        container.classList.remove('active');
+                    }
+                });
+
+                // Hide all podiums when switching categories
+                podiumContainers.forEach(container => {
+                    container.classList.remove('active');
+                });
+
+                // Auto-select default subcategory based on main category
+                const categoryName = category.dataset.category;
+                let defaultSubcategory;
+                
+                switch(categoryName) {
+                    case 'reading':
+                        defaultSubcategory = document.querySelector('.subcategory-container[data-parent="reading"] .subcategory');
+                        break;
+                    case 'listening':
+                        defaultSubcategory = document.querySelector('.subcategory-container[data-parent="listening"] .subcategory:nth-child(3)'); // Soundtracks
+                        break;
+                    case 'watching':
+                        defaultSubcategory = document.querySelector('.subcategory-container[data-parent="watching"] .subcategory:nth-child(1)'); // Movies
+                        break;
+                    case 'playing':
+                        defaultSubcategory = document.querySelector('.subcategory-container[data-parent="playing"] .subcategory:nth-child(1)'); // Board/Card Games
+                        break;
+                }
+
+                if (defaultSubcategory) {
+                    // Update active subcategory
+                    subcategories.forEach(sub => sub.classList.remove('active'));
+                    defaultSubcategory.classList.add('active');
+
+                    // Show corresponding podium
+                    const category = defaultSubcategory.textContent.toLowerCase().replace(/[^a-z0-9]/g, '');
+                    const targetPodium = document.querySelector(`.podium-container[data-category="${category}"]`);
+                    if (targetPodium) {
+                        targetPodium.classList.add('active');
+                    }
+                }
+            });
+        });
+
+        subcategories.forEach(subcategory => {
+            subcategory.addEventListener('click', () => {
+                const category = subcategory.textContent.toLowerCase().replace(/[^a-z0-9]/g, '');
+                
+                // Update active subcategory
+                subcategories.forEach(sub => sub.classList.remove('active'));
+                subcategory.classList.add('active');
+                
+                // Hide all podiums
+                podiumContainers.forEach(container => {
+                    container.classList.remove('active');
+                });
+                
+                // Show the corresponding podium
+                const targetPodium = document.querySelector(`.podium-container[data-category="${category}"]`);
+                if (targetPodium) {
+                    targetPodium.classList.add('active');
+                }
+            });
+        });
+
+        // Initialize with first category active
+        categories[0].click();
+
+        // Get DOM elements
+        const windowFrame = document.querySelector('.window-frame');
+        const scenes = document.querySelectorAll('.scene');
+        const bgMusic = document.getElementById('bgMusic');
+        const muteButton = document.getElementById('muteButton');
+        const volumeControl = document.querySelector('.volume-control');
+        const themeButton = document.getElementById('themeButton');
+        const blurOverlay = document.querySelector('.blur-overlay');
+        const description = document.querySelector('.description');
+        const homeSection = document.querySelector('.home-section');
+        
+        // Initialize variables
+        let isDarkMode = false;
+        let isExpanded = false;
+        let isInHomeSection = true;
+
+        // Set initial font for dropdown
+        const dropdown = document.querySelector('.dropdown');
+        dropdown.style.fontFamily = "'Almendra', serif";
+
+        // Check if we're in the home section
+        function updateSection() {
+            const scrollPosition = window.scrollY;
+            const windowHeight = window.innerHeight;
+            
+            if (scrollPosition < windowHeight / 2) {
+                isInHomeSection = true;
+                dropdown.style.fontFamily = "'Almendra', serif";
+            } else {
+                isInHomeSection = false;
+                dropdown.style.fontFamily = "'Montserrat', sans-serif";
+            }
+        }
+
+        // Update section on scroll
+        window.addEventListener('scroll', () => {
+            updateSection();
+            if (!isInHomeSection) {
+                collapse();
+            }
+            
+            // Update dropdown font based on section
+            const scrollPosition = window.scrollY;
+            const windowHeight = window.innerHeight;
+            
+            if (scrollPosition < windowHeight / 2) {
+                dropdown.style.fontFamily = "'Almendra', serif";
+            } else if (scrollPosition < windowHeight * 1.5) {
+                dropdown.style.fontFamily = "'Montserrat', sans-serif";
+            } else if (scrollPosition < windowHeight * 2.5) {
+                dropdown.style.fontFamily = "'Playfair Display', serif";
+            } else if (scrollPosition < windowHeight * 3.5) {
+                dropdown.style.fontFamily = "'Suez One', serif";
+            } else {
+                dropdown.style.fontFamily = "'Kanit', sans-serif";
+            }
+        });
+
+        // Mouse movement parallax (only in home section)
+        document.addEventListener('mousemove', (e) => {
+            if (!isInHomeSection) return;
+            
+            const { clientX, clientY } = e;
+            const { innerWidth, innerHeight } = window;
+            
+            const xPos = (clientX / innerWidth - 0.5) * 2;
+            const yPos = (clientY / innerHeight - 0.5) * 2;
+            
+            requestAnimationFrame(() => {
+                const scale = isExpanded ? 'scale(1.2)' : 'scale(1)';
+                windowFrame.style.transform = `${scale} perspective(1000px) rotateY(${xPos * 5}deg) rotateX(${-yPos * 5}deg)`;
+
+            scenes.forEach(scene => {
+                scene.style.transform = `
+                    translateZ(-10px)
+                    translateX(${-xPos * 20}px)
+                    translateY(${-yPos * 20}px)
+                `;
+            });
+            });
+        });
+
+        // Handle smooth scrolling for navigation
+        document.querySelectorAll('.dropdown-content a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').slice(1);
+                
+                if (targetId === 'home') {
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                } else {
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }
+                
+                // Close the menu after clicking
+                dropdownContent.classList.remove('show');
+                dropdownButton.textContent = '×';
+                isMenuOpen = false;
+            });
+        });
+
+        // Audio controls
+        bgMusic.volume = 0.5;
+        bgMusic.muted = true;
+
+        // Function to update mute button icon based on audio state
+        function updateMuteButton() {
+            muteButton.innerHTML = bgMusic.muted ? 
+                '<svg viewBox="0 0 24 24"><path d="M3,9H7L12,4V20L7,15H3V9M16.59,12L14,9.41L15.41,8L18,10.59L20.59,8L22,9.41L19.41,12L22,14.59L20.59,16L18,13.41L15.41,16L14,14.59L16.59,12Z"/></svg>' : 
+                '<svg viewBox="0 0 24 24"><path d="M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.84 14,18.7V20.77C18,19.86 21,16.28 21,12C21,7.72 18,4.14 14,3.23M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16C15.5,15.29 16.5,13.76 16.5,12M3,9V15H7L12,20V4L7,9H3Z"/></svg>';
+        }
+
+        muteButton.addEventListener('click', () => {
+            bgMusic.muted = !bgMusic.muted;
+            updateMuteButton();
+            if (!bgMusic.muted) {
+                bgMusic.play().catch(error => {
+                    console.log('Music play failed:', error);
+                });
+            }
+        });
+
+        volumeControl.addEventListener('input', (e) => {
+            bgMusic.volume = e.target.value / 100;
+        });
+
+        // Theme toggle
+        themeButton.addEventListener('click', () => {
+            isDarkMode = !isDarkMode;
+            document.body.classList.toggle('dark-mode');
+            themeButton.innerHTML = isDarkMode ? 
+                '<svg viewBox="0 0 24 24"><path d="M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z"/></svg>' : 
+                '<svg viewBox="0 0 24 24"><path d="M12,18C11.11,18 10.26,17.8 9.5,17.45C11.56,16.5 13,14.42 13,12C13,9.58 11.56,7.5 9.5,6.55C10.26,6.2 11.11,6 12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18M20,8.69V4H15.31L12,0.69L8.69,4H4V8.69L0.69,12L4,15.31V20H8.69L12,23.31L15.31,20H20V15.31L23.31,12L20,8.69Z"/></svg>';
+        });
+
+        // Subtitle animation
+        const subtitles = [
+            'Software Engineer',
+            'Creator',
+            'Video Editor',
+            'Content Strategist',
+            'Hacker'
+        ];
+        
+        const subtitleElement = document.querySelector('.subtitle');
+        let currentSubtitle = 0;
+
+        function updateSubtitle() {
+            subtitleElement.textContent = subtitles[currentSubtitle];
+            subtitleElement.classList.add('visible');
+            
+            setTimeout(() => {
+                subtitleElement.classList.remove('visible');
+                currentSubtitle = (currentSubtitle + 1) % subtitles.length;
+            }, 2800);
+        }
+
+        updateSubtitle();
+        setInterval(updateSubtitle, 3000);
+
+        // Expand/contract functionality
+        function toggleExpand(e) {
+            if (!isExpanded) {
+                windowFrame.classList.add('expanded');
+                blurOverlay.classList.add('visible');
+                description.classList.add('visible');
+                bgMusic.muted = false;
+                updateMuteButton();
+                bgMusic.play().catch(error => {
+                    console.log('Music play failed:', error);
+                });
+                isExpanded = true;
+                e.stopPropagation();
+
+                // Trigger immediate transform
+                const { clientX, clientY } = e;
+                const { innerWidth, innerHeight } = window;
+                const xPos = (clientX / innerWidth - 0.5) * 2;
+                const yPos = (clientY / innerHeight - 0.5) * 2;
+                windowFrame.style.transform = `scale(1.2) perspective(1000px) rotateY(${xPos * 5}deg) rotateX(${-yPos * 5}deg)`;
+            }
+        }
+
+        function collapse() {
+            if (isExpanded) {
+                windowFrame.classList.remove('expanded');
+                blurOverlay.classList.remove('visible');
+                description.classList.remove('visible');
+                isExpanded = false;
+            }
+        }
+
+        windowFrame.addEventListener('click', toggleExpand);
+        document.addEventListener('click', collapse);
+
+        // Dropdown menu functionality
+        const dropdownButton = document.querySelector('.dropdown-button');
+        const dropdownContent = document.querySelector('.dropdown-content');
+        let isMenuOpen = false;
+
+        dropdownButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            isMenuOpen = !isMenuOpen;
+            dropdownContent.classList.toggle('show');
+            dropdownButton.textContent = isMenuOpen ? '+' : '×';
+        });
+
+        // Add the word cycling animation
+        const words = document.querySelectorAll('.changing-word span');
+        let currentWord = 0;
+
+        function cycleWords() {
+            words.forEach(word => {
+                word.classList.remove('visible');
+            });
+            words[currentWord].classList.add('visible');
+            currentWord = (currentWord + 1) % words.length;
+        }
+
+        cycleWords();
+        setInterval(cycleWords, 3000);
+
+        // Add carousel functionality
+        const slides = document.querySelectorAll('.carousel-slide');
+        const prevButton = document.querySelector('.prev');
+        const nextButton = document.querySelector('.next');
+        let currentSlide = 0;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + slides.length) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }
+
+        prevButton.addEventListener('click', () => showSlide(currentSlide - 1));
+        nextButton.addEventListener('click', () => showSlide(currentSlide + 1));
+
+        // Add tab switching functionality
+        const carouselTabs = document.querySelectorAll('.carousel-tab');
+        const carousels = document.querySelectorAll('.carousel-container');
+
+        carouselTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Update tabs
+                carouselTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                // Update carousels
+                carousels.forEach(carousel => {
+                    carousel.classList.remove('active');
+                    if (carousel.id === `${tab.dataset.carousel}-carousel`) {
+                        carousel.classList.add('active');
+                    }
+                });
+            });
+        });
+
+        // Initialize carousel functionality for both carousels
+        function initializeCarousel(containerId) {
+            const container = document.getElementById(containerId);
+            const slides = container.querySelectorAll('.carousel-slide');
+            const prevButton = container.querySelector('.prev');
+            const nextButton = container.querySelector('.next');
+            let currentSlide = 0;
+
+            function showSlide(n) {
+                slides[currentSlide].classList.remove('active');
+                currentSlide = (n + slides.length) % slides.length;
+                slides[currentSlide].classList.add('active');
+            }
+
+            prevButton.addEventListener('click', () => showSlide(currentSlide - 1));
+            nextButton.addEventListener('click', () => showSlide(currentSlide + 1));
+        }
+
+        initializeCarousel('projects-carousel');
+        initializeCarousel('hobbies-carousel');
+
+        // Update title part click functionality
+        const titleParts = document.querySelectorAll('.projects-section .title-part');
+        
+        titleParts.forEach(part => {
+            part.addEventListener('click', () => {
+                // Update title parts
+                titleParts.forEach(t => t.classList.remove('active'));
+                part.classList.add('active');
+
+                // Update carousels
+                carousels.forEach(carousel => {
+                    carousel.classList.remove('active');
+                    if (carousel.id === `${part.dataset.carousel}-carousel`) {
+                        carousel.classList.add('active');
+                    }
+                });
+            });
+        });
+
+        // Timeline functionality
+        const timelineScrollArea = document.querySelector('.timeline-scroll-area');
+        const timelineEvents = document.querySelectorAll('.timeline-events');
+        const events = document.querySelectorAll('.timeline-event');
+        const timelinePrevButton = document.querySelector('.timeline-nav.prev');
+        const timelineNextButton = document.querySelector('.timeline-nav.next');
+
+        let isDragging = false;
+        let startX;
+        let startScrollX;
+        let currentEventIndex = 0;
+        let isAnimating = false;
+        let currentTranslateX = 0;
+
+        function updateTimeline(index, smooth = true) {
+            if (isAnimating && smooth) return;
+            isAnimating = true;
+
+            events.forEach(event => event.classList.remove('active'));
+            const targetEvent = events[index];
+            targetEvent.classList.add('active');
+
+            const targetX = targetEvent.offsetLeft - (window.innerWidth / 2) + (targetEvent.offsetWidth / 2);
+            currentTranslateX = targetX;
+            
+            timelineEvents.forEach(timeline => {
+                timeline.style.transition = smooth ? 'transform 0.5s ease' : 'none';
+                timeline.style.transform = `translateX(-${targetX}px)`;
+            });
+
+            setTimeout(() => {
+                isAnimating = false;
+                timelineEvents.forEach(timeline => {
+                    timeline.style.transition = 'transform 0.5s ease';
+                });
+            }, smooth ? 500 : 0);
+        }
+
+        function handleNext() {
+            if (currentEventIndex < events.length - 1) {
+                currentEventIndex++;
+                updateTimeline(currentEventIndex);
+            }
+        }
+
+        function handlePrev() {
+            if (currentEventIndex > 0) {
+                currentEventIndex--;
+                updateTimeline(currentEventIndex);
+            }
+        }
+
+        // Event listeners for buttons
+        timelinePrevButton.addEventListener('click', handlePrev);
+        timelineNextButton.addEventListener('click', handleNext);
+
+        // Event listeners for keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            
+            if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                handlePrev();
+            }
+            if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                handleNext();
+            }
+        });
+
+        // Event listeners for dragging
+        timelineScrollArea.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.pageX;
+            startScrollX = currentTranslateX;
+            timelineEvents.forEach(timeline => {
+                timeline.style.transition = 'none';
+            });
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            
+            const x = e.pageX;
+            const walk = startX - x;
+            const newTranslateX = startScrollX + walk;
+            
+            timelineEvents.forEach(timeline => {
+                timeline.style.transform = `translateX(-${newTranslateX}px)`;
+            });
+            currentTranslateX = newTranslateX;
+        });
+
+        function stopDragging() {
+            if (!isDragging) return;
+            isDragging = false;
+            
+            // Find the closest event
+            let closestEvent = events[0];
+            let closestDistance = Infinity;
+            
+            events.forEach((event, index) => {
+                const eventX = event.offsetLeft - (window.innerWidth / 2) + (event.offsetWidth / 2);
+                const distance = Math.abs(eventX - currentTranslateX);
+                
+                if (distance < closestDistance) {
+                    closestDistance = distance;
+                    closestEvent = event;
+                    currentEventIndex = index;
+                }
+            });
+            
+            updateTimeline(currentEventIndex);
+        }
+
+        document.addEventListener('mouseup', stopDragging);
+        document.addEventListener('mouseleave', stopDragging);
+
+        // Event listeners for clicking events
+        events.forEach((event, index) => {
+            event.addEventListener('click', () => {
+                if (!isDragging) {
+                    currentEventIndex = index;
+                    updateTimeline(currentEventIndex);
+                }
+            });
+        });
+
+        // Initialize timeline
+        updateTimeline(currentEventIndex);
+
+        // Mouse position based scrolling
+        let scrollInterval;
+        const scrollSpeed = 5;
+
+        document.addEventListener('mousemove', (e) => {
+            clearInterval(scrollInterval);
+
+            const mouseX = e.clientX;
+            const windowWidth = window.innerWidth;
+            const scrollThreshold = 100; // pixels from edge
+
+            if (mouseX < scrollThreshold) {
+                scrollInterval = setInterval(() => {
+                    timelineEvents.forEach(timeline => {
+                        const currentX = parseInt(timeline.style.transform.replace(/[^\d-]/g, '')) || 0;
+                        timeline.style.transform = `translateX(-${currentX - scrollSpeed}px)`;
+                    });
+                }, 16);
+            } else if (mouseX > windowWidth - scrollThreshold) {
+                scrollInterval = setInterval(() => {
+                    timelineEvents.forEach(timeline => {
+                        const currentX = parseInt(timeline.style.transform.replace(/[^\d-]/g, '')) || 0;
+                        timeline.style.transform = `translateX(-${currentX + scrollSpeed}px)`;
+                    });
+                }, 16);
+            }
+        });
+
+        document.addEventListener('mouseleave', () => {
+            clearInterval(scrollInterval);
+        });
+    </script>
 </body>
 </html>
+
+<!--
+Hi, welcome to my source code.
+I'd like to thank my friend Claude for help on this project.
+Seriously, read There Is No Antimemetics Divison.
+You can read it in an afternoon, it'll break your brain.
+- IK
+-->
