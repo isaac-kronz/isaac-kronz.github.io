@@ -742,11 +742,12 @@
             }
 
             .social-icons {
-                position: relative;
+                position: relative;  /* Change from fixed */
                 margin-top: 20px;
                 padding: 10px;
                 background: rgba(0, 0, 0, 0.2);
                 border-radius: 10px;
+                z-index: 2;
             }
         }
 
@@ -1573,6 +1574,34 @@
 
             .honorary-mentions {
                 margin-top: -60px;  /* Adjust for smaller scale */
+            }
+        }
+
+        @media (max-width: 768px), (orientation: portrait) {
+            .projects-section {
+                padding: 30px 20px;  /* Add horizontal padding */
+            }
+
+            .media-section {
+                padding: 30px 20px;  /* Add horizontal padding */
+            }
+
+            .section-title {
+                font-size: 3rem;  /* Slightly reduce title size on mobile */
+                padding: 0 10px;  /* Add some padding to titles */
+                word-wrap: break-word;  /* Ensure long words wrap */
+            }
+
+            /* Adjust Projects & Hobbies title spacing */
+            .projects-section .section-title {
+                gap: 15px;  /* Reduce gap between title parts */
+            }
+        }
+
+        /* Additional adjustment for very small screens */
+        @media (max-width: 480px) {
+            .section-title {
+                font-size: 2.5rem;  /* Further reduce title size */
             }
         }
     </style>
