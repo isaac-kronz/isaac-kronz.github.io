@@ -86,12 +86,13 @@
         }
 
         .about-section {
-            background: #1a237e;  /* Royal blue */
+            background: #1a237e;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding-top: 60px;
-            font-family: 'Montserrat', sans-serif;
+            padding: 60px 20px;  /* Add horizontal padding */
+            min-height: 100vh;
+            position: relative;  /* Add this */
         }
 
         .education-section {
@@ -158,21 +159,11 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 60px;
             font-family: 'Kanit', sans-serif;
         }
 
         .media-section .section-title {
             font-family: 'Kanit', sans-serif;
-        }
-
-        /* Remove all media-specific styles */
-        .media-grid,
-        .media-row,
-        .media-row-title,
-        .app-grid,
-        .app-placeholder {
-            display: none;
         }
 
         .section-title {
@@ -708,28 +699,55 @@
             background: rgba(255, 255, 255, 0.3);
         }
 
+        /* Base styles for reach-out text and social icons */
         .reach-out {
             color: white;
             font-family: 'Montserrat', sans-serif;
             font-size: 2.5rem;
             font-weight: 700;
             text-align: center;
-            margin: 0;
-            position: absolute;
-            top: 70%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            margin-bottom: 20px;
         }
 
         .social-icons {
             display: flex;
             justify-content: center;
             gap: 40px;
-            margin: 0;
-            position: absolute;
-            top: 80%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            margin-top: 20px;
+        }
+
+        /* Desktop positioning */
+        @media (min-width: 769px) {
+            .reach-out {
+                position: absolute;
+                top: 60%;  /* Changed from 70% to 60% */
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+
+            .social-icons {
+                position: absolute;
+                top: 70%;  /* Changed from 80% to 70% */
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        /* Mobile/portrait positioning */
+        @media (max-width: 768px), (orientation: portrait) {
+            .reach-out {
+                position: relative;
+                margin-top: auto;
+                padding-top: 40px;
+            }
+
+            .social-icons {
+                position: relative;
+                margin-top: 20px;
+                padding: 10px;
+                background: rgba(0, 0, 0, 0.2);
+                border-radius: 10px;
+            }
         }
 
         .social-icon {
@@ -1040,207 +1058,123 @@
         /* Timeline styles */
         .timeline-container {
             position: relative;
-            width: 90%;
-            max-width: 1200px;
-            height: 600px;
-            margin: 40px auto;
-            overflow: hidden;
-        }
-
-        .timeline-scroll-area {
-            position: relative;
             width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            cursor: grab;
-        }
-
-        .timeline-scroll-area:active {
-            cursor: grabbing;
+            max-width: 1200px;
+            margin: 0 auto;  /* Changed from margin: 50px auto to 0 auto */
+            padding: 20px;
+            height: 80vh;
+            overflow-y: auto;
+            overflow-x: hidden;
         }
 
         .timeline-line {
             position: absolute;
-            left: 0;
-            right: 0;
-            top: 50%;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-50%);
-        }
-
-        .timeline-events {
-            position: absolute;
-            left: 0;
-            right: 0;
-            display: flex;
-            gap: 200px;
-            padding: 0 600px;
-            transition: transform 0.5s ease;
-        }
-
-        .education-events {
-            top: 50px;
-            margin-bottom: 50px;
-        }
-
-        .work-events {
-            bottom: 50px;
-            margin-top: 50px;
-        }
-
-        .timeline-event {
-            position: relative;
-            width: 200px;
-            flex-shrink: 0;
-        }
-
-        .timeline-event::after {
-            content: '';
-            position: absolute;
-            width: 2px;
-            background: rgba(255, 255, 255, 0.3);
             left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: rgba(255, 255, 255, 0.2);
             transform: translateX(-50%);
         }
 
-        .education-events .timeline-event::after {
-            top: calc(100% + 10px);
-            height: 140px;
-        }
-
-        .work-events .timeline-event::after {
-            bottom: calc(100% + 10px);
-            height: 140px;
-        }
-
-        .event-content {
-            position: relative;
-            width: 200px;
-            height: 200px;
+        .timeline-box {
+            position: absolute;
+            width: 40%;
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .event-content:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .event-content img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .event-hover {
-            position: absolute;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 15px;  /* Changed from padding: 15px to padding: 10px 15px */
+            border-radius: 8px;
             color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .timeline-box:hover {
+            transform: scale(1.02);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .education-box {
+            left: 5%;
+            top: 50px;
+        }
+
+        .timeline-box h3 {
             font-family: 'Playfair Display', serif;
-            font-size: 1.2rem;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .event-content:hover .event-hover {
-            opacity: 1;
-        }
-
-        .event-tooltip {
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%) translateY(-20px);
-            background: rgba(0, 0, 0, 0.9);
+            font-size: 1.8rem;
+            margin: 0 0 20px 0;
             color: white;
-            padding: 15px;
-            border-radius: 5px;
+            display: inline-block;  /* Add this line */
+        }
+
+        .timeline-box ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .timeline-box li {
             font-family: 'Playfair Display', serif;
             font-size: 1rem;
-            width: max-content;
-            max-width: 300px;
-            text-align: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, transform 0.3s ease;
-            pointer-events: none;
-            z-index: 100;
+            margin-bottom: 12px;
+            line-height: 1.4;
+            position: relative;
+            padding-left: 20px;
         }
 
-        .event-tooltip::after {
-            content: '';
+        .timeline-box li::before {
+            content: '•';
             position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            border: 8px solid transparent;
-            border-top-color: rgba(0, 0, 0, 0.9);
+            left: 0;
+            color: rgba(255, 255, 255, 0.6);
         }
 
-        .timeline-event.active .event-tooltip {
-            opacity: 1;
-            visibility: visible;
-            transform: translateX(-50%) translateY(-10px);
+        .timeline-box li:last-child {
+            margin-bottom: 0;
         }
 
-        .timeline-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            font-size: 24px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-            z-index: 10;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .timeline-nav:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .timeline-nav.prev {
-            left: 20px;
-        }
-
-        .timeline-nav.next {
-            right: 20px;
-        }
-
-        .timeline-event::before {
-            content: attr(data-date);
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            color: white;
+        .timeline-date {
+            display: inline-block;
+            margin-left: 15px;
+            color: rgba(255, 255, 255, 0.8);
             font-family: 'Playfair Display', serif;
             font-size: 1.2rem;
-            white-space: nowrap;
         }
 
-        .education-events .timeline-event::before {
-            bottom: 270px;
+        .homeschool-box {
+            left: 5%;
+            top: 10px;  /* Changed from 20px to 10px */
         }
 
-        .work-events .timeline-event::before {
-            top: 270px;
+        .university-box {
+            left: 5%;
+            top: 420px;
         }
+
+        .work-box {
+            right: 5%;
+            width: 40%;
+        }
+
+        .nnu-box {
+            top: 10px;  /* Keep first box position */
+        }
+
+        .vacasa-box {
+            top: 135px;  /* Changed from 145px */
+        }
+
+        .paylocity-box {
+            top: 327px;  /* Changed from 337px */
+        }
+
+        .vox-box {
+            top: 497px;  /* Changed from 507px */
+        }
+
+        .buildingreports-box {
+            top: 630px;  /* Changed from 640px */
+        }
+
+        /* Add these styles back after the timeline styles */
 
         /* Media section styles */
         .media-categories {
@@ -1441,14 +1375,211 @@
             align-items: center;
         }
 
-        .podium-place:hover {
-            transform: translateY(-10px);
-        }
-
         .podium-link:hover .podium-title {
             text-decoration: underline;
         }
+
+        /* Add these media queries after your existing styles */
+
+        @media (max-width: 768px), (orientation: portrait) {
+            .window-frame {
+                display: none;
+            }
+
+            .home-section {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+                padding: 20px;
+            }
+
+            .title {
+                position: static;
+                transform: none;
+                font-size: 4rem;  /* Smaller font size for mobile */
+                letter-spacing: 10px;  /* Reduced letter spacing */
+                margin-bottom: 20px;
+            }
+
+            .subtitle {
+                position: static;
+                transform: none;
+                font-size: 1.2rem;
+                margin-top: 10px;
+            }
+
+            /* Adjust audio controls position for mobile */
+            .audio-controls {
+                left: 10px;
+                transform: none;
+                top: 10px;
+            }
+
+            .about-section {
+                padding-bottom: 120px;  /* Increase bottom padding */
+            }
+
+            .reach-out {
+                margin-top: auto;  /* Push to bottom of flex container */
+                padding-top: 40px;  /* Add space above the text */
+            }
+
+            .social-icons {
+                position: relative;  /* Change from fixed */
+                margin-top: 20px;
+                padding: 10px;
+                background: rgba(0, 0, 0, 0.2);
+                border-radius: 10px;
+                z-index: 2;
+            }
+        }
+
+        /* Additional adjustment for very small screens */
+        @media (max-width: 480px) {
+            .title {
+                font-size: 3rem;
+                letter-spacing: 5px;
+            }
+        }
+
+        /* Update existing social-links styles */
+        .social-links {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 1;
+        }
+
+        /* Add these media queries for responsive social links */
+        @media (max-width: 768px), (orientation: portrait) {
+            .social-links {
+                position: relative;  /* Change from fixed to relative */
+                bottom: auto;
+                margin-top: 40px;  /* Add space between content and links */
+                padding: 20px;
+                background: rgba(0, 0, 0, 0.3);  /* Optional: add subtle background */
+                border-radius: 10px;
+            }
+
+            /* Ensure the section containing social links has enough space */
+            .about-section {
+                padding-bottom: 100px;  /* Add padding to prevent content overlap */
+            }
+        }
+
+        /* Add these media queries for timeline responsiveness */
+        @media (max-width: 768px), (orientation: portrait) {
+            .timeline-container {
+                padding: 10px;
+                height: auto;  /* Remove fixed height */
+                overflow-y: visible;  /* Allow content to flow */
+            }
+
+            .timeline-line {
+                left: 20px;  /* Move timeline to left side */
+            }
+
+            .timeline-box {
+                position: relative;  /* Change from absolute to relative */
+                width: 85%;  /* Wider boxes */
+                margin: 20px auto;  /* Center boxes */
+                left: auto;
+                right: auto;
+                top: auto;  /* Remove all absolute positioning */
+            }
+
+            /* Hide the date lines since they won't work in mobile */
+            .timeline-event::after {
+                display: none;
+            }
+
+            .timeline-event::before {
+                display: none;
+            }
+
+            /* Stack all boxes in a single column */
+            .homeschool-box,
+            .university-box,
+            .work-box,
+            .nnu-box,
+            .vacasa-box,
+            .paylocity-box,
+            .vox-box,
+            .buildingreports-box {
+                margin-left: 40px;  /* Give space for the timeline line */
+            }
+        }
+
+        /* Add these media queries for the media section */
+        @media (max-width: 768px), (orientation: portrait) {
+            /* Keep existing category/subcategory styles */
+            .category-row {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+
+            .category {
+                font-size: 2rem;
+            }
+
+            .subcategory-container.active {
+                flex-direction: column;
+                gap: 15px;
+                padding: 0 20px;
+                margin-bottom: 60px;  /* Add space below subcategories */
+            }
+
+            .subcategory {
+                width: 100%;
+                font-size: 1.2rem;
+            }
+
+            /* Updated podium styles for mobile */
+            .podium {
+                transform: scale(0.7);
+                transform-origin: top center;
+                margin: -30px 0;  /* Adjusted from -60px to -30px to account for new spacing */
+            }
+
+            .podium-image {
+                width: 180px;  /* Keep original width */
+                height: 270px;  /* Keep original height */
+            }
+
+            .podium-title {
+                font-size: 1.2rem;  /* Keep original font size */
+                width: 180px;
+            }
+
+            .honorary-mentions {
+                font-size: 1rem;
+                padding: 0 30px;
+                margin-top: -40px;  /* Adjust for scaled podium */
+            }
+        }
+
+        /* Additional adjustments for very small screens */
+        @media (max-width: 480px) {
+            .podium {
+                transform: scale(0.5);  /* Scale down even more for very small screens */
+                margin: -100px 0;  /* More margin compensation */
+            }
+
+            .honorary-mentions {
+                margin-top: -60px;  /* Adjust for smaller scale */
+            }
+        }
     </style>
+    <!-- Add this script in the head section -->
+    <script>
+        
+    </script>
 </head>
 <body>
     <div class="section home-section">
@@ -1525,7 +1656,7 @@
             <div class="fixed-word">Me</div>
         </h2>
         <p class="about-text">
-            I <em>am</em> a Christian, husband (4 months in), software engineer, and creator.<br>
+            I <em>am</em> a Christian, husband <span id="daysMarried"></span>, software engineer, and creator.<br>
             I <em>love</em> creativity and competition.<br>
             I <em>hate</em> laziness, lack of ambition, and dishonesty.<br>
             I <em>believe</em> <a href="https://reason.com/2020/02/29/specialization-is-for-insects/" target="_blank" rel="noopener noreferrer">generalization > specialization</a> and <a href="https://www.cato.org/commentary/case-libertarian" target="_blank" rel="noopener noreferrer">small gov > big gov</a>.<br>
@@ -1556,85 +1687,72 @@
     <div id="education" class="section education-section">
         <h2 class="section-title">Education & Career</h2>
         <div class="timeline-container">
-            <div class="timeline-scroll-area">
-                <div class="timeline-line"></div>
-                <div class="timeline-events education-events">
-                    <div class="timeline-event" data-date="1997">
-                        <div class="event-content">
-                            <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23ddd'/><text x='50' y='50' font-size='20' text-anchor='middle' dy='.3em' fill='%23666'>1997</text></svg>" alt="Placeholder">
-                            <div class="event-hover">Click for more</div>
-                            <div class="event-tooltip">Born ready to learn!</div>
-                        </div>
-                    </div>
-                    <div class="timeline-event" data-date="2003">
-                        <div class="event-content">
-                            <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23ddd'/><text x='50' y='50' font-size='20' text-anchor='middle' dy='.3em' fill='%23666'>2003</text></svg>" alt="Placeholder">
-                            <div class="event-hover">Click for more</div>
-                            <div class="event-tooltip">Started elementary school with a passion for learning.</div>
-                        </div>
-                    </div>
-                    <div class="timeline-event" data-date="2009">
-                        <div class="event-content">
-                            <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23ddd'/><text x='50' y='50' font-size='20' text-anchor='middle' dy='.3em' fill='%23666'>2009</text></svg>" alt="Placeholder">
-                            <div class="event-hover">Click for more</div>
-                            <div class="event-tooltip">Middle school: where the real challenges began.</div>
-                        </div>
-                    </div>
-                    <div class="timeline-event" data-date="2012">
-                        <div class="event-content">
-                            <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23ddd'/><text x='50' y='50' font-size='20' text-anchor='middle' dy='.3em' fill='%23666'>2012</text></svg>" alt="Placeholder">
-                            <div class="event-hover">Click for more</div>
-                            <div class="event-tooltip">High school: discovered my love for technology.</div>
-                        </div>
-                    </div>
-                    <div class="timeline-event" data-date="2016">
-                        <div class="event-content">
-                            <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23ddd'/><text x='50' y='50' font-size='20' text-anchor='middle' dy='.3em' fill='%23666'>2016</text></svg>" alt="Placeholder">
-                            <div class="event-hover">Click for more</div>
-                            <div class="event-tooltip">Started university, diving deep into computer science.</div>
-                        </div>
-                    </div>
-                    <div class="timeline-event" data-date="2020">
-                        <div class="event-content">
-                            <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23ddd'/><text x='50' y='50' font-size='20' text-anchor='middle' dy='.3em' fill='%23666'>2020</text></svg>" alt="Placeholder">
-                            <div class="event-hover">Click for more</div>
-                            <div class="event-tooltip">Graduated with honors in Computer Science.</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="timeline-events work-events">
-                    <div class="timeline-event" data-date="2014">
-                        <div class="event-content">
-                            <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23ddd'/><text x='50' y='50' font-size='20' text-anchor='middle' dy='.3em' fill='%23666'>2014</text></svg>" alt="Placeholder">
-                            <div class="event-hover">Click for more</div>
-                            <div class="event-tooltip">First summer internship in web development.</div>
-                        </div>
-                    </div>
-                    <div class="timeline-event" data-date="2017">
-                        <div class="event-content">
-                            <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23ddd'/><text x='50' y='50' font-size='20' text-anchor='middle' dy='.3em' fill='%23666'>2017</text></svg>" alt="Placeholder">
-                            <div class="event-hover">Click for more</div>
-                            <div class="event-tooltip">Part-time software developer while in university.</div>
-                        </div>
-                    </div>
-                    <div class="timeline-event" data-date="2020">
-                        <div class="event-content">
-                            <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23ddd'/><text x='50' y='50' font-size='20' text-anchor='middle' dy='.3em' fill='%23666'>2020</text></svg>" alt="Placeholder">
-                            <div class="event-hover">Click for more</div>
-                            <div class="event-tooltip">First full-time software engineering position.</div>
-                        </div>
-                    </div>
-                    <div class="timeline-event" data-date="2023">
-                        <div class="event-content">
-                            <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23ddd'/><text x='50' y='50' font-size='20' text-anchor='middle' dy='.3em' fill='%23666'>2023</text></svg>" alt="Placeholder">
-                            <div class="event-hover">Click for more</div>
-                            <div class="event-tooltip">Exploring new opportunities in software and content creation.</div>
-                        </div>
-                    </div>
-                </div>
+            <div class="timeline-line"></div>
+            
+            <!-- Education boxes (left side) -->
+            <div class="timeline-box education-box homeschool-box">
+                <h3>Homeschooling</h3><div class="timeline-date">2001-2014</div>
+                <ul>
+                    <li>Top 2% score on elementary standardized testing</li>
+                    <li>6 years: Competitive Bible quizzing</li>
+                    <li>5 years: Latin and Spanish</li>
+                    <li>10 years: Piano lessons/recitals</li>
+                    <li>6 years: Karate, youngest black belt in NSK history</li>
+                    <li>Sports: Tennis, Flag Football, Ping Pong, Volleyball tournaments</li>
+                    <li>At 14: Learned basic HTML/CSS/JS and Python</li>
+                    <li>At 15: Joined a BBS and learned basic hacking</li>
+                    <li>12 credits earned before entering university</li>
+                </ul>
             </div>
-            <button class="timeline-nav prev">←</button>
-            <button class="timeline-nav next">→</button>
+            <div class="timeline-box education-box university-box">
+                <h3>University</h3><div class="timeline-date">2015-2019</div>
+                <ul>
+                    <li>Earned the highest scholarship - Presidential Scholarship</li>
+                    <li>Only NNU student to take every single Computer Science course offered</li>
+                    <li>Intermediate Video Production - Learned videography, live directing, and screenwriting</li>
+                    <li>Special Effects - got a credit learning SFX from a Pixar artist</li>
+                    <li>Embedded Engineering - 400 level EE course, very fun</li>
+                </ul>
+            </div>
+
+            <!-- Work boxes (right side) -->
+            <div class="timeline-box work-box nnu-box">
+                <h3>NNU</h3><div class="timeline-date">2015-2017</div>
+                <ul>
+                    <li>IT and CS research lab</li>
+                </ul>
+            </div>
+
+            <div class="timeline-box work-box vacasa-box">
+                <h3>Vacasa</h3><div class="timeline-date">2018-2020</div>
+                <ul>
+                    <li>Executed front page designs, extended the Google Maps API for property carousels, other stuff</li>
+                    <li>Stack: React, Python, Django, Wagtail, Postgres</li>
+                </ul>
+            </div>
+
+            <div class="timeline-box work-box paylocity-box">
+                <h3>Paylocity</h3><div class="timeline-date">2020-2023</div>
+                <ul>
+                    <li>Variety of full stack work for their internal Surveys product</li>
+                    <li>Stack: React, Angular, C#, .NET, MSSQL</li>
+                </ul>
+            </div>
+
+            <div class="timeline-box work-box vox-box">
+                <h3>Vox Valens/Life Bridge Capital</h3><div class="timeline-date">2023</div>
+                <ul>
+                    <li>Content strategist - Tripled organic reach in 2 months</li>
+                </ul>
+            </div>
+
+            <div class="timeline-box work-box buildingreports-box">
+                <h3>BuildingReports</h3><div class="timeline-date">2023-now</div>
+                <ul>
+                    <li>Fixed bugs, upgraded features, working on larger projects now</li>
+                    <li>Stack: Objective-C, Swift, SQLite, Firebase</li>
+                </ul>
+            </div>
         </div>
     </div>
 
@@ -2241,8 +2359,30 @@
     <div class="description">This is my idealized view. I love winter, snowboarding, and just about anything involving deep, fluffy snow.</div>
 
     <script>
-                // Media category functionality
-                const categories = document.querySelectorAll('.category');
+        function updateDaysMarried() {
+            const weddingDate = new Date('2024-09-08');
+            const today = new Date();
+            const diffTime = Math.abs(today - weddingDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            // Get the element that shows the days
+            const daysElement = document.getElementById('daysMarried');
+            
+            // If date is in the future, show "X days until", otherwise show "X days in"
+            if (today < weddingDate) {
+                daysElement.textContent = `(${diffDays} days until)`;
+            } else {
+                daysElement.textContent = `(${diffDays} days in)`;
+            }
+        }
+
+        // Update when page loads
+        document.addEventListener('DOMContentLoaded', updateDaysMarried);
+        // Update every day
+        setInterval(updateDaysMarried, 1000 * 60 * 60 * 24);
+
+        // Media category functionality
+        const categories = document.querySelectorAll('.category');
         const subcategoryContainers = document.querySelectorAll('.subcategory-container');
         const subcategories = document.querySelectorAll('.subcategory');
         const podiumContainers = document.querySelectorAll('.podium-container');
@@ -2791,6 +2931,35 @@
         document.addEventListener('mouseleave', () => {
             clearInterval(scrollInterval);
         });
+
+        // Add this to your existing JavaScript
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const timelineEvents = document.querySelectorAll('.timeline-event');
+            const container = document.querySelector('.timeline-container');
+
+            timelineEvents.forEach(event => {
+                event.addEventListener('click', () => {
+                    // Remove active class from all events
+                    timelineEvents.forEach(e => e.classList.remove('active'));
+                    
+                    // Add active class to clicked event
+                    event.classList.add('active');
+                    
+                    // Calculate scroll position to center the clicked event
+                    const eventRect = event.getBoundingClientRect();
+                    const containerRect = container.getBoundingClientRect();
+                    const scrollTo = container.scrollTop + (eventRect.top - containerRect.top) - 
+                                    (containerRect.height / 2) + (eventRect.height / 2);
+                    
+                    // Smooth scroll to center the event
+                    container.scrollTo({
+                        top: scrollTo,
+                        behavior: 'smooth'
+                    });
+                });
+            });
+        });
     </script>
 </body>
 </html>
@@ -2798,7 +2967,6 @@
 <!--
 Hi, welcome to my source code.
 I'd like to thank my friend Claude for help on this project.
-Seriously, read There Is No Antimemetics Divison.
-You can read it in an afternoon, it'll break your brain.
+Do yourself a favor and read the Bible. It will change your life.
 - IK
 -->
