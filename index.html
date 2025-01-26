@@ -183,7 +183,10 @@
             padding: 20px;
             position: relative;
             box-shadow: 0 0 20px rgba(0,0,0,0.5);
-            transform-style: preserve-3d;
+            transform: translate3d(0, 0, 0);
+            backface-visibility: hidden;
+            perspective: 1000px;
+            will-change: transform;
             transition: transform 0.1s linear;
             margin: 0 auto;
         }
@@ -221,9 +224,11 @@
             left: 0;
             right: 0;
             bottom: 0;
-            transform: translateZ(-10px);
+            transform: translate3d(0, 0, -10px);
             overflow: hidden;
             transition: transform 0.1s linear;
+            backface-visibility: hidden;
+            will-change: transform;
         }
 
         .scene video {
@@ -1604,10 +1609,163 @@
                 font-size: 2.5rem;  /* Further reduce title size */
             }
         }
+
+        /* Add these media queries for larger screens */
+        @media (min-width: 2000px) {
+            .window-frame {
+                width: 1000px;
+                height: 625px;
+            }
+
+            .title {
+                font-size: 7rem;
+            }
+
+            .subtitle {
+                font-size: 1.8rem;
+                top: 160px;
+            }
+
+            .section-title {
+                font-size: 5rem;
+            }
+
+            .about-text {
+                font-size: 1.4rem;
+                max-width: 1000px;
+            }
+
+            .timeline-box {
+                width: 35%;  /* Slightly narrower boxes on large screens */
+            }
+
+            .podium-image {
+                width: 220px;
+                height: 330px;
+            }
+
+            .podium-title {
+                font-size: 1.4rem;
+                width: 220px;
+            }
+
+            .category {
+                font-size: 3rem;
+            }
+
+            .subcategory {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (min-width: 3000px) {
+            .window-frame {
+                width: 1200px;
+                height: 750px;
+            }
+
+            .title {
+                font-size: 8rem;
+            }
+
+            .subtitle {
+                font-size: 2rem;
+                top: 190px;
+            }
+
+            .section-title {
+                font-size: 6rem;
+            }
+
+            .about-text {
+                font-size: 1.6rem;
+                max-width: 1200px;
+            }
+
+            .timeline-box {
+                width: 30%;
+            }
+
+            .podium-image {
+                width: 260px;
+                height: 390px;
+            }
+
+            .podium-title {
+                font-size: 1.6rem;
+                width: 260px;
+            }
+
+            .category {
+                font-size: 3.5rem;
+            }
+
+            .subcategory {
+                font-size: 1.7rem;
+            }
+        }
     </style>
     <!-- Add this script in the head section -->
     <script>
-        
+        // Add this function at the start of your JavaScript
+        function isHardwareAccelerated() {
+            // Create a canvas element
+            const canvas = document.createElement('canvas');
+            const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+            
+            // If WebGL isn't available, hardware acceleration is likely off
+            if (!gl) {
+                return false;
+            }
+
+            // Check if the browser is Safari
+            const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+            if (isSafari) {
+                return false;
+            }
+
+            // Check if the browser is Chrome
+            const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+            
+            // Additional check for hardware acceleration in Chrome
+            if (isChrome) {
+                const info = gl.getExtension('WEBGL_debug_renderer_info');
+                const renderer = info ? gl.getParameter(info.UNMASKED_RENDERER_WEBGL) : '';
+                // If renderer includes "SwiftShader" or "Software", hardware acceleration is off
+                return !(renderer.includes('SwiftShader') || renderer.includes('Software'));
+            }
+
+            return false;  // Default to false for other browsers
+        }
+
+        // Add this right after your DOM content loaded event
+        document.addEventListener('DOMContentLoaded', () => {
+            const windowFrame = document.querySelector('.window-frame');
+            const title = document.querySelector('.title');
+            const subtitle = document.querySelector('.subtitle');
+            const homeSection = document.querySelector('.home-section');
+
+            if (!isHardwareAccelerated()) {
+                // Remove the window frame
+                if (windowFrame) {
+                    windowFrame.style.display = 'none';
+                }
+
+                // Center the title and subtitle
+                homeSection.style.display = 'flex';
+                homeSection.style.flexDirection = 'column';
+                homeSection.style.justifyContent = 'center';
+                homeSection.style.alignItems = 'center';
+
+                title.style.position = 'static';
+                title.style.transform = 'none';
+                title.style.marginBottom = '20px';
+
+                subtitle.style.position = 'static';
+                subtitle.style.transform = 'none';
+                subtitle.style.marginTop = '10px';
+            }
+        });
     </script>
 </head>
 <body>
@@ -2552,29 +2710,34 @@
             }
         });
 
-        // Mouse movement parallax (only in home section)
+        // Replace the existing mousemove event listener with this optimized version
+        let ticking = false;
         document.addEventListener('mousemove', (e) => {
             if (!isInHomeSection) return;
             
-            const { clientX, clientY } = e;
-            const { innerWidth, innerHeight } = window;
-            
-            const xPos = (clientX / innerWidth - 0.5) * 2;
-            const yPos = (clientY / innerHeight - 0.5) * 2;
-            
-            requestAnimationFrame(() => {
-                const scale = isExpanded ? 'scale(1.2)' : 'scale(1)';
-                windowFrame.style.transform = `${scale} perspective(1000px) rotateY(${xPos * 5}deg) rotateX(${-yPos * 5}deg)`;
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    const { clientX, clientY } = e;
+                    const { innerWidth, innerHeight } = window;
+                    
+                    const xPos = (clientX / innerWidth - 0.5) * 2;
+                    const yPos = (clientY / innerHeight - 0.5) * 2;
+                    
+                    const scale = isExpanded ? 'scale3d(1.2, 1.2, 1)' : 'scale3d(1, 1, 1)';
+                    windowFrame.style.transform = `${scale} perspective(1000px) translate3d(0, 0, 0) rotateY(${xPos * 5}deg) rotateX(${-yPos * 5}deg)`;
 
-            scenes.forEach(scene => {
-                scene.style.transform = `
-                    translateZ(-10px)
-                    translateX(${-xPos * 20}px)
-                    translateY(${-yPos * 20}px)
-                `;
-            });
-            });
-        });
+                    scenes.forEach(scene => {
+                        scene.style.transform = `
+                            translate3d(${-xPos * 20}px, ${-yPos * 20}px, -10px)
+                        `;
+                    });
+                    
+                    ticking = false;
+                });
+
+                ticking = true;
+            }
+        }, { passive: true });
 
         // Handle smooth scrolling for navigation
         document.querySelectorAll('.dropdown-content a').forEach(anchor => {
